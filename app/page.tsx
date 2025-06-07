@@ -1,4 +1,4 @@
-import App from "@/pages/app-client"
+import App from '@/components/pages/app-client'
 import { neon } from '@neondatabase/serverless'
 import { MainRow } from "@/types"
 import Alert from "@/components/alert"

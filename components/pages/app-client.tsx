@@ -186,7 +186,7 @@ export default function App() {
         </Link>
 
         <div className='fixed bottom-0 left-0 w-full h-[100px] bg-[url(/main/ground.jpg)] bg-repeat-x'></div>
-        {hasMounted && (
+        {hasMounted ? (
           <>
             <div className='fixed left-0 bottom-[120px] w-screen h-[calc(100vh-21rem)]'>
               <animated.div className='relative duration-1000 ease-out w-full h-full' style={dewyStyle}>
@@ -204,7 +204,11 @@ export default function App() {
               </animated.div>
             </div>
           </>
-        )}
+        ):
+        <div className='fixed w-full h-full flex flex-col left-0 top-0 items-center justify-center animate-pulse'>
+          <Image className='w-40' alt='loading' src={'/dewy/dewy_smile.png'} width={671} height={653} />
+          <p className='text-[#05aee6] text-xl mt-4 font-[family-name:var(--font-nunito)]'>Loading</p>
+        </div>}
 
         <div className='fixed bottom-0 left-0 h-[6.4rem] z-100 grid grid-cols-[1fr_10px_50px_50px] gap-4 w-full p-6 pl-8'>
           {!volume ?
@@ -237,7 +241,7 @@ export default function App() {
           </Bubble>
         </div>
         <Navigation />
-      </div>
+      </div>:
       {error && <Alert />}
     </>
   )

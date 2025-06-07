@@ -206,13 +206,12 @@ export default function App() {
           </>
         ) :
           <div className='fixed w-full h-full flex flex-col left-0 top-0 items-center justify-center animate-pulse'>
-            <Image className='w-40' alt='loading' src={'/dewy/dewy_smile.png'} width={671} height={653} />
+            <Image className='w-40' alt='loading' src={'/dewy/dewy_smile.png'} width={671} height={653} priority />
             <p className='text-[#05aee6] text-xl mt-4 font-[family-name:var(--font-nunito)]'>Loading</p>
           </div>}
 
-        <div className='fixed bottom-0 left-0 h-[6.4rem] z-100 grid grid-cols-[1fr_10px_50px_50px] gap-4 w-full p-6 pl-8'>
-          {!volume ?
-            <div></div> :
+        {hasMounted &&
+          <div className='fixed bottom-0 left-0 h-[6.4rem] z-100 grid grid-cols-[1fr_10px_50px_50px] gap-4 w-full p-6 pl-8'>
             <StyledSlider
               aria-label="Water Intake"
               valueLabelDisplay={volume > 0 ? "auto" : "off"}
@@ -226,22 +225,22 @@ export default function App() {
                   setAmount(val)
                 }
               }}
-            />}
-          <div></div>
-          <div onClick={add}>
-            <Bubble link='/'>
-              <Plus />
+            />
+            <div></div>
+            <div onClick={add}>
+              <Bubble link='/'>
+                <Plus />
+              </Bubble>
+            </div>
+            <Bubble link='/select-cup'>
+              {cupIndex === null ?
+                <GlassWater className='animate-pulse' /> :
+                <Image src={`/cups/${cupIndex}.png`} alt='cup' width='207' height='399' className='p-[14px]' />
+              }
             </Bubble>
-          </div>
-          <Bubble link='/select-cup'>
-            {cupIndex === null ?
-              <GlassWater className='animate-pulse' /> :
-              <Image src={`/cups/${cupIndex}.png`} alt='cup' width='207' height='399' className='p-[14px]' />
-            }
-          </Bubble>
-        </div>
-        <Navigation />
-      </div>:
+          </div>}
+        {hasMounted && <Navigation />}
+      </div>
       {error && <Alert />}
     </>
   )

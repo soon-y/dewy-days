@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import StrokeHeader from '@/components/ui/strokeHeader'
 import Bubble from '@/components/ui/bubble'
 import { X, Minus, Droplet } from 'lucide-react'
-import { TimelineRow, RawTimelineRow, MainRow } from '@/types'
+import { TimelineRow, RawTimelineRow } from '@/types'
 import Alert from '@/components/alert'
 import StrokeText from '@/components/ui/strokeText'
 

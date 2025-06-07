@@ -9,11 +9,11 @@ export default async function Home() {
 
     const [timelineData, currentAmountData] = await Promise.all([
       sql`SELECT * FROM timeline`,
-      sql`SELECT * FROM main WHERE id = 1`
+      sql`SELECT 'current_amount' FROM main WHERE id = 1`
     ])
 
     const timeline = timelineData as TimelineRow[]
-    const currentAmount = currentAmountData as MainRow[]
+    const currentAmount = currentAmountData as {current_amount: number}[]
 
     if (!timeline.length || !currentAmount.length) {
       throw new Error("Timeline or main data not found")

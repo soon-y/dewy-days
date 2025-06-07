@@ -21,7 +21,7 @@ type Grouped = {
   }[]
 }
 
-export default function Timeline({ data, main }: { data: TimelineRow[], main: MainRow }) {
+export default function Timeline({ data, main }: { data: TimelineRow[], main: {current_amount: number} }) {
   const [groupedData, setGroupedData] = useState<Grouped[]>()
   const [error, setError] = useState<boolean>(false)
   const [updateData, setUpdateData] = useState<boolean>(false)

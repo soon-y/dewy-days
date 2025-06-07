@@ -25,7 +25,7 @@ export default function App() {
   const [waterIntake, setWaterIntake] = useState<number>(0)
   const [waterHeight, setWaterHeight] = useState<number>(0)
   const [volume, setVolume] = useState<number>(0)
-  const [amount, setAmount] = useState<number>(volume)
+  const [amount, setAmount] = useState<number>(0)
   const [error, setError] = useState<boolean>(false)
   const [hasMounted, setHasMounted] = useState<boolean>(false)
   const [hurray, setHurray] = useState<boolean>(false)
@@ -64,6 +64,7 @@ export default function App() {
       } else {
         setReset(json.reset)
         setVolume(json.cupAmount)
+        setAmount(json.cupAmount)
         setGoal(json.main[0].goal)
         setWaterIntake(json.main[0].current_amount)
         setCupIndex(json.main[0].cup_index)
@@ -77,7 +78,7 @@ export default function App() {
 
   useEffect(() => {
     if (resetCurrentAmount) {
-      fetch('/api/updateCurrentAmount', {
+      fetch('/api/main/updateCurrentAmount', {
         method: 'POST',
       })
         .then(res => {
@@ -214,17 +215,13 @@ export default function App() {
           <div className='fixed bottom-0 left-0 h-[6.4rem] z-100 grid grid-cols-[1fr_10px_50px_50px] gap-4 w-full p-6 pl-8'>
             <StyledSlider
               aria-label="Water Intake"
-              valueLabelDisplay={volume > 0 ? "auto" : "off"}
+              valueLabelDisplay="auto"
               step={5}
               min={0}
               max={volume}
               marks={marks}
               value={amount}
-              onChange={(event, val) => {
-                if (typeof val === 'number') {
-                  setAmount(val)
-                }
-              }}
+              onChange={(event, val) => { if (typeof val === 'number') { setAmount(val) }}}
             />
             <div></div>
             <div onClick={add}>

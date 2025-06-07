@@ -1,4 +1,4 @@
-import Timeline from "@/pages/timtline-client"
+import Timeline from "@/pages/timetline-client"
 import { neon } from '@neondatabase/serverless'
 import { TimelineRow, MainRow } from "@/types"
 

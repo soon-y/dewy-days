@@ -1,80 +1,26 @@
-![Vercel with Neon](./assets/home.png)
+# Dewy Days
+<a href="https://dewy-days.vercel.app/" target="_blank">
+<img src="public/appIcon.png" alt="App Screenshot" width="100" /><br>
+</a> 
 
--> View demo: [vercel-marketplace-neon.vercel.app](https://vercel-marketplace-neon.vercel.app/)
+## Introduction
+Dewy Days is a water tracking application I designed as my graduation project in 2015. The interactive prototype was built in 2025.
 
-# Neon Postgres
+## Features
+* Engaging UI with character reactions when water is added
+* Real-time weather updates from the [Open Meteo API](https://open-meteo.com/)
+* Easy water intake logging via a slider
+* Personalized daily water goals based on weight, activity level, and weather
+* Water reminders to help build healthy hydration habits
+* Clear and intuitive water tracking experience
 
-A minimal template for building full-stack React applications using Next.js, Vercel, and Neon.
+## Built with
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Tailwind](https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Typescript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
-## Getting Started
-
-Click the "Deploy" button to clone this repo, create a new Vercel project, setup the Neon integration, and provision a new Neon database:
-
-[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fneondatabase-labs%2Fvercel-marketplace-neon%2Ftree%2Fmain&project-name=my-vercel-neon-app&repository-name=my-vercel-neon-app&products=[{%22type%22:%22integration%22,%22integrationSlug%22:%22neon%22,%22productSlug%22:%22neon%22,%22protocol%22:%22storage%22}])
-
-Once the process is complete, you can clone the newly created GitHub repository and start making changes locally.
-
-## Local Setup
-
-### Installation
-
-Install the dependencies:
-
-```bash
-npm install
-```
-
-You can use the package manager of your choice. For example, Vercel also supports `bun install` out of the box.
-
-### Development
-
-#### Create a .env file in the project root
-
-```bash
-cp .env.example .env
-```
-
-#### Get your database URL
-
-Obtain the database connection string from the Connection Details widget on the [Neon Dashboard](https://console.neon.tech/).
-
-#### Add the database URL to the .env file
-
-Update the `.env` file with your database connection string:
-
-```txt
-# The connection string has the format `postgres://user:pass@host/db`
-DATABASE_URL=<your-string-here>
-```
-
-#### Start the development server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more about Neon, check out the Neon documentation:
-
-- [Neon Documentation](https://neon.tech/docs/introduction) - learn about Neon's features and SDKs.
-- [Neon Discord](https://discord.gg/9kf3G4yUZk) - join the Neon Discord server to ask questions and join the community.
-- [ORM Integrations](https://neon.tech/docs/get-started-with-neon/orms) - find Object-Relational Mappers (ORMs) that work with Neon.
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-## Deploy on Vercel
-
-Commit and push your code changes to your GitHub repository to automatically trigger a new deployment.
-
-
-
-
-
+* UI components from [MUI](https://mui.com/material-ui/getting-started/)
+* svg from [FontAwesome](https://fontawesome.com/)
+* Icon from [Lucide](https://lucide.dev/)

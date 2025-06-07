@@ -22,6 +22,7 @@ export default function Profile() {
   const [error, setError] = useState<boolean>(false)
   const activeIcon = 'M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288l111.5 0L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7l-111.5 0L349.4 44.6'
   const manualIcon = 'M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z'
+  const skeletonStyle = 'w-full h-14 my-3 bg-[#7fdcfb] inline-block rounded-md animate-pulse'
 
   useEffect(() => {
     async function fetchData() {
@@ -102,13 +103,13 @@ export default function Profile() {
                 <div className='flex items-center justify-center'>
                   {loaded ?
                     <NumInput name='goal' initial={manualGoal} step={10} min={0} unit='ml' setNumber={setManualGoal} disable={false} /> :
-                    <div className='w-[90%] h-14 my-3 bg-[#7fdcfb] inline-block rounded-md animate-pulse'></div>}
+                    <div className={skeletonStyle}></div>}
                 </div>
                 :
                 <>
                   {loaded ?
                     <NumInput name='weight' initial={weight} step={1} min={30} unit='kg' setNumber={setWeight} disable={false} /> :
-                    <div className='w-[90%] h-14 my-3 bg-[#7fdcfb] inline-block rounded-md animate-pulse'></div>
+                    <div className={skeletonStyle}></div>
                   }
 
                   <div className='w-56 grid grid-cols-[1fr_56px] gap-2 items-center mt-4'>
@@ -118,7 +119,7 @@ export default function Profile() {
 
                   {loaded ?
                     <NumInput name='workout' initial={duration} step={15} min={0} unit='mins' setNumber={setDuration} disable={!activity} /> :
-                    <div className='w-[90%] h-14 my-3 bg-[#7fdcfb] inline-block rounded-md animate-pulse'></div>
+                    <div className={skeletonStyle}></div>
                   }
                 </>}
             </div>

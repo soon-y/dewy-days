@@ -2,8 +2,230 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background: #8fdfff;
+  --backgroundG: #1fb0da;
+  --foreground: #171717;
+}
+
 body {
-  @apply relative min-w-[320px] min-h-screen antialiased;
-  @apply bg-white text-[#0C0D0D] dark:bg-black dark:text-white;
-  -webkit-tap-highlight-color: transparent;
+  background: var(--background);
+  color: white;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
+div::-webkit-scrollbar {
+  display: none;
+}
+
+.gradient {
+  background-image: linear-gradient(180deg, var(--background), var(--backgroundG));
+}
+
+.navIcon {
+  filter: drop-shadow(1px 1px 2px rgb(122, 158, 186));
+}
+
+.weatherInfo th {
+  width: 50%;
+  text-align: right;
+  padding-right: 0.4rem;
+}
+
+.weatherInfo td {
+  width: 50%;
+  padding-left: 0.4rem;
+}
+
+.amountGroup {
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+  mask-size: 100%;
+  mask-repeat: no-repeat;
+  mask-position: 0 0;
+  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+  -webkit-mask-size: 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: 0 0;
+}
+
+@keyframes dungdung {
+  0% {
+    transform: translateY(-45%);
+  }
+
+  50% {
+    transform: translateY(-55%);
+  }
+
+  100% {
+    transform: translateY(-45%);
+  }
+}
+
+@keyframes wiggleT {
+  0% {
+    transform: translate(-45%, 0);
+  }
+
+  25% {
+    transform: translate(-55%, 5%);
+  }
+
+  50% {
+    transform: translate(-45%, 10%);
+  }
+
+  75% {
+    transform: translate(-55%, 5%);
+  }
+
+  100% {
+    transform: translate(-45%, 0);
+  }
+}
+
+@keyframes wiggleB {
+  0% {
+    transform: translate(-55%, 0);
+  }
+
+  25% {
+    transform: translate(-45%, 5%);
+  }
+
+  50% {
+    transform: translate(-55%, 10%);
+  }
+
+  75% {
+    transform: translate(-45%, 5%);
+  }
+
+  100% {
+    transform: translate(-55%, 0);
+  }
+}
+
+@keyframes drop {
+  0% {
+    top: 30%;
+    opacity: 0;
+  }
+
+  5% {
+    top: 30%;
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  95% {
+    top: 90%;
+    opacity: 0;
+  }
+
+  100% {
+    top: 30%;
+    opacity: 0;
+  }
+}
+
+@keyframes dropNrotate {
+  0% {
+    rotate: 0;
+    top: 30%;
+    opacity: 0;
+  }
+
+  5% {
+    rotate: 0;
+    top: 30%;
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  95% {
+    rotate: 360deg;
+    top: 95%;
+    opacity: 0;
+  }
+
+  100% {
+    rotate: 0;
+    top: 30%;
+    opacity: 0;
+  }
+}
+
+@keyframes wiggleT {
+  0% {
+    transform: translate(-52%, 0%);
+  }
+
+  50% {
+    transform: translate(-48%, 0%);
+  }
+
+  100% {
+    transform: translate(-52%, 0%);
+  }
+}
+
+@keyframes wiggleB {
+  0% {
+    transform: translate(-48%, 0%);
+  }
+
+  50% {
+    transform: translate(-52%, 0%);
+  }
+
+  100% {
+    transform: translate(-48%, 0%);
+  }
+}
+
+.timePickerWrapper {
+  mask-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+  mask-size: 100%;
+  mask-repeat: no-repeat;
+  mask-position: 0 0;
+  -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+  -webkit-mask-size: 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: 0 0;
+}
+
+@keyframes water {
+  0% {
+    transform: translate(0%, 0%);
+  }
+
+  100% {
+    transform: translate(-100vw, 0%);
+  }
+}
+
+@keyframes onWater {
+  0% {
+    transform: translate(0, 10px);
+  }
+
+  50% {
+    transform: translate(0, 0);
+  }
+
+  100% {
+    transform: translate(0, 10px);
+  }
 }

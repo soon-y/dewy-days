@@ -9,7 +9,7 @@ export default async function Home() {
 
     const [timelineData, currentAmountData] = await Promise.all([
       sql`SELECT * FROM timeline`,
-      sql`SELECT 'current_amount' FROM main WHERE id = 1`
+      sql`SELECT current_amount FROM main WHERE id = 1`
     ])
 
     const timeline = timelineData as TimelineRow[]
@@ -20,7 +20,7 @@ export default async function Home() {
     }
 
     return (
-      <Timeline data={timeline} main={currentAmount[0]} />
+      <Timeline data={timeline} main={currentAmount[0] ?? { current_amount: 0 }} />
     )
   } catch (error) {
     console.error("Failed to fetch data:", error)

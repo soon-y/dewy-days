@@ -21,15 +21,35 @@ type Grouped = {
   }[]
 }
 
-export default function Timeline({ data, main }: { data: TimelineRow[], main: {current_amount: number} }) {
+export default function Timeline() {
   const [groupedData, setGroupedData] = useState<Grouped[]>()
   const [error, setError] = useState<boolean>(false)
   const [updateData, setUpdateData] = useState<boolean>(false)
-  const [currentAmount, setCurrentAmount] = useState<number>(main.current_amount)
+  const [currentAmount, setCurrentAmount] = useState<number>(0)
   const today = new Date().toISOString().split('T')[0]
+  const skeletonStyle = 'animate-pulse w-full h-[60px] py-3 rounded-xl mt-8 bg-[#01aae2]'
 
   useEffect(() => {
-    groupByDateAndTime(data)
+    setUpdateData(true)
+
+    async function fetchCurrentAmount() {
+      const res = await fetch('/api/timeline/fetchCurrentAmount')
+      if (!res.ok) {
+        setError(true)
+        setTimeout(() => setError(false), 3000)
+        return
+      }
+
+      const json = await res.json()
+      if (json === null) {
+        setError(true)
+        setTimeout(() => setError(false), 3000)
+      } else {
+        setCurrentAmount(json.currentAmount[0].current_amount)
+      }
+    }
+
+    fetchCurrentAmount()
   }, [])
 
   useEffect(() => {
@@ -122,32 +142,39 @@ export default function Timeline({ data, main }: { data: TimelineRow[], main: {c
         </div>
 
         <div className='w-full sm:w-[30rem] m-auto'>
-          {groupedData?.map((el, i) => (
-            <div key={i}>
-              <div className='w-auto h-auto px-5 py-3 rounded-xl mt-8 bg-[#0092bf]'>
-                <StrokeText isDay={1} text={`${el.total}ml`} strokeDay={'#007295'} strokeNight={''} className='inline' />
-                <span className='font-bold float-right'>{formattedDate(new Date(el.date))}</span><br />
-                <StrokeText isDay={1} text={`${Math.round(el.total / el.items[el.items.length - 1].goal * 100)}%`} strokeDay={'#007295'} strokeNight={''} className='inline' />
-                <span className='text-sm float-right'>{el.items[el.items.length - 1].goal}ml</span>
-              </div>
-              {el.items.map((item, i) => (
-                <div key={i}>
-                  <div className='w-2 h-5 bg-[#0092bf] ml-[32px]'></div>
-                  <div className='h-16 grid grid-cols-[26px_1fr_50px_32px] gap-2 items-center text-[#0092bf] bg-white pl-5 pr-4 py-1 border-[3px] border-[#0291bb] rounded-[40px]'>
-                    <Image className='w-full' alt='cup' width={207} height={399} src={`/cups/${item.cupIndex}.png`} />
-                    <span className='font-bold'>{item.amount}ml</span>
-                    <span className='font-bold float-left'>{item.time}</span>
-                    {(el.date === today) ?
-                      <div className='cursor-pointer border border-gray-300 bg-gray-200 hover:bg-gray-300 w-[32px] h-[32px] flex items-center justify-center rounded-full' onClick={() => { deleteData(item.id, item.amount) }}>
-                        <Minus className='text-gray-400 p-[2px]' />
-                      </div> :
-                      <div className='border border-[#5bcefc] w-[32px] h-[32px] flex items-center justify-center rounded-full'>
-                        <Droplet className='p-[2px] text-[#5bcefc]' />
-                      </div>
-                    }
-                  </div>
-                </div>))}
-            </div>))}
+          {!updateData ?
+            groupedData?.map((el, i) => (
+              <div key={i}>
+                <div className='w-auto h-auto px-5 py-3 rounded-xl mt-8 bg-[#0092bf]'>
+                  <StrokeText isDay={1} text={`${el.total}ml`} strokeDay={'#007295'} strokeNight={''} className='inline' />
+                  <span className='font-bold float-right'>{formattedDate(new Date(el.date))}</span><br />
+                  <StrokeText isDay={1} text={`${Math.round(el.total / el.items[el.items.length - 1].goal * 100)}%`} strokeDay={'#007295'} strokeNight={''} className='inline' />
+                  <span className='text-sm float-right'>{el.items[el.items.length - 1].goal}ml</span>
+                </div>
+                {el.items.map((item, i) => (
+                  <div key={i}>
+                    <div className='w-2 h-5 bg-[#0092bf] ml-[32px]'></div>
+                    <div className='h-16 grid grid-cols-[26px_1fr_50px_32px] gap-2 items-center text-[#0092bf] bg-white pl-5 pr-4 py-1 border-[3px] border-[#0291bb] rounded-[40px]'>
+                      <Image className='w-full' alt='cup' width={207} height={399} src={`/cups/${item.cupIndex}.png`} />
+                      <span className='font-bold'>{item.amount}ml</span>
+                      <span className='font-bold float-left'>{item.time}</span>
+                      {(el.date === today) ?
+                        <div className='cursor-pointer border border-gray-300 bg-gray-200 hover:bg-gray-300 w-[32px] h-[32px] flex items-center justify-center rounded-full' onClick={() => { deleteData(item.id, item.amount) }}>
+                          <Minus className='text-gray-400 p-[2px]' />
+                        </div> :
+                        <div className='border border-[#5bcefc] w-[32px] h-[32px] flex items-center justify-center rounded-full'>
+                          <Droplet className='p-[2px] text-[#5bcefc]' />
+                        </div>
+                      }
+                    </div>
+                  </div>))}
+              </div>)) :
+            <div>
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className={skeletonStyle}></div>
+              ))}
+            </div>
+          }
         </div>
       </div>
       {error && <Alert />}

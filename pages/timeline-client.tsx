@@ -56,7 +56,7 @@ export default function Timeline({ data, main }: { data: TimelineRow[], main: {c
   }, [updateData])
 
   const deleteData = async (id: number, amount: number) => {
-    const newAmount: number = currentAmount - Number(amount)
+    const newAmount: number = currentAmount - amount
 
     const res = await fetch(`/api/timeline/delete`, {
       method: 'POST',
@@ -64,8 +64,8 @@ export default function Timeline({ data, main }: { data: TimelineRow[], main: {c
     })
     const result = await res.json()
     if (result.success) {
-      setUpdateData(true)
       setCurrentAmount(newAmount)
+      setUpdateData(true)
     } else {
       setError(true)
       setTimeout(() => setError(false), 3000)

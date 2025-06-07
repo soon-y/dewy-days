@@ -10,25 +10,25 @@ import { colors } from '@/theme'
 import Navigation from '@/components/navigation'
 import { StyledSlider } from '@/components/ui/slider'
 import Bubble from '@/components/ui/bubble'
-import { Plus } from 'lucide-react'
+import { Plus, GlassWater } from 'lucide-react'
 import Water from '@/components/water'
 import Dewy from '@/components/dewy'
 import DewyBg from '@/components/dewyBg'
 import WeatherIcon from '@/components/weatherIcon'
 import { getLocation, Coordinates } from '@/app/api/getLocation/getLocation'
 import { fetchTimezone, Location } from '@/app/api/getLocation/getTimezone'
-import { MainRow } from "@/types"
 
-export default function App({ data, cup, reset }: { data: MainRow, cup: { amount: number }, reset: boolean }) {
-  const goal = data.goal
-  const cupIndex = data.cup_index
-  const [resetCurrentAmount, setReset] = useState<boolean>(reset)
+export default function App() {
+  const [cupIndex, setCupIndex] = useState<number | null>(null)
+  const [resetCurrentAmount, setReset] = useState<boolean>(false)
+  const [goal, setGoal] = useState<number>(0)
+  const [waterIntake, setWaterIntake] = useState<number>(0)
+  const [waterHeight, setWaterHeight] = useState<number>(0)
+  const [volume, setVolume] = useState<number>(0)
+  const [amount, setAmount] = useState<number>(volume)
   const [error, setError] = useState<boolean>(false)
   const [hasMounted, setHasMounted] = useState<boolean>(false)
   const [hurray, setHurray] = useState<boolean>(false)
-  const [waterIntake, setWaterIntake] = useState<number>(data.current_amount)
-  const [waterHeight, setWaterHeight] = useState<number>(100 - (waterIntake / goal * 100))
-  const [amount, setAmount] = useState<number>(cup.amount)
   const [latitude, setLatitude] = useState<number | null>(null)
   const [longitude, setLongitude] = useState<number | null>(null)
   const [timezone, setTimezone] = useState<string>("")
@@ -36,7 +36,7 @@ export default function App({ data, cup, reset }: { data: MainRow, cup: { amount
   const [weatherCode, setWeatehrCode] = useState<number>(999)
   const waterWrapper = useRef<HTMLDivElement>(null)
   const url: string = 'https://api.open-meteo.com/v1/forecast'
-  const marks = [{ value: cup.amount, label: cup.amount + 'ml' }]
+  const marks = [{ value: volume, label: volume + 'ml' }]
   const dewyStyle = useSpring({ top: hasMounted ? (waterIntake === 0 ? '100%' : `${waterHeight}%`) : '100%' })
   const waterStyle = useSpring({
     display: hasMounted ? (waterIntake === 0 ? 'none' : 'block') : 'block',
@@ -44,16 +44,39 @@ export default function App({ data, cup, reset }: { data: MainRow, cup: { amount
   })
 
   useEffect(() => {
-    setHasMounted(true)
     getLocation().then(() => {
       setLatitude(Coordinates.latitude)
       setLongitude(Coordinates.longitude)
     })
-    setReset(reset)
+
+    async function fetchData() {
+      const res = await fetch('/api/main/fetch')
+      if (!res.ok) {
+        setError(true)
+        setTimeout(() => setError(false), 3000)
+        return
+      }
+
+      const json = await res.json()
+      if (json === null) {
+        setError(true)
+        setTimeout(() => setError(false), 3000)
+      } else {
+        setReset(json.reset)
+        setVolume(json.cupAmount)
+        setGoal(json.main[0].goal)
+        setWaterIntake(json.main[0].current_amount)
+        setCupIndex(json.main[0].cup_index)
+        setWaterHeight(100 - (json.main[0].current_amount / json.main[0].goal * 100))
+        setHasMounted(true)
+      }
+    }
+
+    fetchData()
   }, [])
 
   useEffect(() => {
-    if (reset) {
+    if (resetCurrentAmount) {
       fetch('/api/updateCurrentAmount', {
         method: 'POST',
       })
@@ -152,12 +175,14 @@ export default function App({ data, cup, reset }: { data: MainRow, cup: { amount
             strokeDay={colors.day.stroke}
             strokeNight={colors.night.stroke}
           />
-          <StrokeText className='fixed top-[165px] mt-2 text-lg'
-            isDay={isDay}
-            text={`${goal.toString()}ml`}
-            strokeDay={colors.day.stroke}
-            strokeNight={colors.night.stroke}
-          />
+          {goal === 0 ?
+            <div className='fixed top-[165px] mt-3 bg-[#ebfaff] animate-pulse w-16 h-5 rounded-md'></div> :
+            <StrokeText className='fixed top-[165px] mt-2 text-lg'
+              isDay={isDay}
+              text={`${goal}ml`}
+              strokeDay={colors.day.stroke}
+              strokeNight={colors.night.stroke}
+            />}
         </Link>
 
         <div className='fixed bottom-0 left-0 w-full h-[100px] bg-[url(/main/ground.jpg)] bg-repeat-x'></div>
@@ -182,20 +207,22 @@ export default function App({ data, cup, reset }: { data: MainRow, cup: { amount
         )}
 
         <div className='fixed bottom-0 left-0 h-[6.4rem] z-100 grid grid-cols-[1fr_10px_50px_50px] gap-4 w-full p-6 pl-8'>
-          <StyledSlider
-            aria-label="Water Intake"
-            valueLabelDisplay="auto"
-            step={5}
-            min={0}
-            max={cup.amount}
-            marks={marks}
-            value={amount}
-            onChange={(event, val) => {
-              if (typeof val === 'number') {
-                setAmount(val)
-              }
-            }}
-          />
+          {!volume ?
+            <div></div> :
+            <StyledSlider
+              aria-label="Water Intake"
+              valueLabelDisplay={volume > 0 ? "auto" : "off"}
+              step={5}
+              min={0}
+              max={volume}
+              marks={marks}
+              value={amount}
+              onChange={(event, val) => {
+                if (typeof val === 'number') {
+                  setAmount(val)
+                }
+              }}
+            />}
           <div></div>
           <div onClick={add}>
             <Bubble link='/'>
@@ -203,7 +230,10 @@ export default function App({ data, cup, reset }: { data: MainRow, cup: { amount
             </Bubble>
           </div>
           <Bubble link='/select-cup'>
-            <Image src={`/cups/${cupIndex}.png`} alt='cup' width='207' height='399' className='p-[14px]' />
+            {cupIndex === null ?
+              <GlassWater className='animate-pulse' /> :
+              <Image src={`/cups/${cupIndex}.png`} alt='cup' width='207' height='399' className='p-[14px]' />
+            }
           </Bubble>
         </div>
         <Navigation />

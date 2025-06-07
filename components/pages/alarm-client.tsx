@@ -14,7 +14,7 @@ import NumInput from '@/components/ui/numInput'
 import AlarmComp from '@/components/alarmComp'
 import { X } from 'lucide-react'
 import AddAlarm from './addAlarm'
-import { AlarmSettingRow, AlarmRow } from "@/types"
+import { AlarmRow } from "@/types"
 import Alert from '@/components/alert'
 
 export default function Alarm() {

@@ -10,30 +10,53 @@ import AmountPicker from '@/components/ui/amountPicker'
 import Alert from '@/components/alert'
 import { X } from 'lucide-react'
 import { useSwipeable } from 'react-swipeable'
-import { CupRow } from "@/types"
 
-export default function Cups({ cups, main }: { cups: CupRow[], main: { cup_index: number } }) {
+export default function Cups() {
   const router = useRouter()
-  const [cupIndex, setCup] = useState<number>(main.cup_index)
-  const [amount, setAmount] = useState<number>(cups[main.cup_index].amount)
-  const [value, setValue] = useState<number>(cups[main.cup_index].amount)
+  const [cupArray, setCupArray] = useState<{ id: number, amount: number }[]>([])
+  const [cupIndex, setCupIndex] = useState<number>(0)
+  const [amount, setAmount] = useState<number>(0)
+  const [value, setValue] = useState<number>(0)
   const [error, setError] = useState<boolean>(false)
   const slideNum: number[] = [25, -25, -75, -125]
   const slideCup = useSpring({ transform: `translateX(${slideNum[cupIndex]}vw)` })
-  const cupStyle: string = 'w-full h-[calc(100vh-330px)] bg-contain bg-no-repeat bg-center duration-500 cursor-grab'
+  const cupStyle: string = 'w-full h-[calc(100vh-330px)] min-h-[30rem] bg-contain bg-no-repeat bg-center duration-500 cursor-grab'
 
   useEffect(() => {
-    setAmount(cups[cupIndex].amount)
+    async function fetchData() {
+      const res = await fetch('/api/cup/fetch')
+      if (!res.ok) {
+        setError(true)
+        setTimeout(() => setError(false), 3000)
+        return
+      }
+
+      const json = await res.json()
+      if (json === null) {
+        setError(true)
+        setTimeout(() => setError(false), 3000)
+      } else {
+        setCupArray(json.cups)
+        setCupIndex(json.main[0].cup_index)
+        setAmount(json.cups[json.main[0].cup_index].amount)
+        setValue(json.cups[json.main[0].cup_index].amount)
+      }
+    }
+    fetchData()
+  }, [])
+
+  useEffect(() => {
+    if (cupArray.length > 0) setAmount(cupArray[cupIndex].amount)
   }, [cupIndex])
 
   const increment = () => {
     const newValue = cupIndex === 3 ? 3 : cupIndex + 1
-    setCup(newValue)
+    setCupIndex(newValue)
   }
 
   const decrement = () => {
     const newValue = cupIndex === 0 ? 0 : cupIndex - 1
-    setCup(newValue)
+    setCupIndex(newValue)
   }
 
   const handlers = useSwipeable({
@@ -45,7 +68,7 @@ export default function Cups({ cups, main }: { cups: CupRow[], main: { cup_index
   })
 
   const save = async () => {
-    const res = await fetch('/api/updateCup', {
+    const res = await fetch('/api/cup/updateCupSetting', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -370,7 +370,7 @@ export default function Weather() {
         }
 
         {forecastDataFiltered ?
-          <div className='w-full grid grid-cols-6 gap-1 my-4 py-4 border-t text-center items-center justify-items-center'>
+          <div className='w-full grid grid-cols-6 gap-1 my-4 pt-4 pb-8 border-t text-center items-center justify-items-center'>
             {forecastDataFiltered.map(el => (
               <div key={el.id} className='flex flex-col items-center'>
                 <div className='text-sm'>{days[el.days % 7]}</div>
@@ -394,7 +394,7 @@ export default function Weather() {
             ))}
           </div> :
           daysArray &&
-          <div className='w-full grid grid-cols-6 gap-1 my-4 py-4 border-t text-center items-center justify-items-center'>
+          <div className='w-full grid grid-cols-6 gap-1 my-4 pt-4 pb-8 border-t text-center items-center justify-items-center'>
             {daysArray.map(el => (
               <div key={el.id} className='flex flex-col items-center'>
                 <div className='text-sm'>{days[el.days % 7]}</div>

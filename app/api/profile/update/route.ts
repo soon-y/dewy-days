@@ -7,7 +7,7 @@ const sql = neon(`${process.env.DATABASE_URL}`)
 
 export async function POST(req: NextRequest) {
   try {
-    const { weight, duration, activity, manual, goal } = await req.json()
+    const { weight, duration, activity, manual, tempMode, goal } = await req.json()
 
     await sql`
       UPDATE profile
@@ -15,7 +15,8 @@ export async function POST(req: NextRequest) {
         weight = ${weight},
         duration = ${duration},
         activity_mode = ${activity},
-        manual = ${manual}
+        manual = ${manual},
+        temp_mode = ${tempMode}
       WHERE id = 1
     `
     await sql`UPDATE main SET goal = ${goal} WHERE id = 1`

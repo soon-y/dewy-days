@@ -139,7 +139,7 @@ export default function Profile() {
           </Bubble>
         </div>
         <div className='flex flex-col items-center justify-center h-[calc(100vh-100px)] min-h-[500px] font-[family-name:var(--font-nunito)]'>
-          <div className='grid grid-rows-[30px_1fr_60px_60px] h-[420px] items-center justify-center place-items-center mt-2 mb-6'>
+          <div className='grid grid-rows-[30px_1fr_60px_60px] h-[430px] items-center justify-center place-items-center mt-2 mb-6'>
             <div className='w-56 grid grid-cols-[1fr_56px] gap-2 items-center'>
               <p className=' font-bold'>Set Manually</p>
               <ToggleSwitch onChange={(event, val) => setManual(val)} checked={manual} svg={manualIcon} />

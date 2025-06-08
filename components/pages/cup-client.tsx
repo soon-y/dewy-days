@@ -103,7 +103,7 @@ export default function Cups() {
           <div className={`${cupStyle} bg-[url(/cups/3.png)] ${cupIndex === 3 ? '' : 'grayscale opacity-50'}`}></div>
         </animated.div>
 
-        <AmountPicker unit='ml' min={0} max={1800} initial={amount} setNumber={setValue} step={10} />
+        <AmountPicker unit='ml' min={0} max={2100} initial={amount} setNumber={setValue} step={10} />
 
         <div className='flex justify-center mb-6' onClick={save}>
           <Button disable={value === 0}>

@@ -282,7 +282,7 @@ export default function Weather() {
           onTouchMove={drag}
           onTouchEnd={() => dragEnd()}>
           {hourlyData ?
-            <div className='absolute w-full h-full grid grid-rows-[30px_1fr_30px] p-16 justify-center items-center text-center gap-4'>
+            <div className='absolute w-full h-full grid grid-rows-[30px_1fr_30px] p-12 justify-center items-center text-center gap-4'>
               <div className='font-medium text-2xl text-[#0898da]'>{time + AMPM()}</div>
               <div className='h-full aspect-[1]'>
                 <WeatherIcon code={hourlyData.weather_code[index]} isDay={hourlyData.is_day[index]} opc={true} />

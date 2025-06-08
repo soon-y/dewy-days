@@ -51,7 +51,7 @@ export default function Navigation() {
 
       {trail.map(({ ...otherProps }, i) => (
         <animated.div key={links[i]} style={{ ...otherProps }}>
-          <Bubble link={"/" + links[i]} className="mt-4">
+          <Bubble link={"/" + links[i]} className="mt-3">
             <Image alt={links[i]} width={30} height={30} src={'/menu/' + links[i] + '.png'} />
           </Bubble>
         </animated.div>

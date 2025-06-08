@@ -145,7 +145,7 @@ export default function Timeline() {
           {!updateData ?
             groupedData?.map((el, i) => (
               <div key={i}>
-                <div className='w-auto h-auto px-5 py-3 rounded-xl mt-8 bg-[#0092bf]'>
+                <div className='w-auto h-auto px-4 pt-[8px] pb-[6px] rounded-xl mt-7 bg-[#0092bf]'>
                   <StrokeText isDay={1} text={`${el.total}ml`} strokeDay={'#007295'} strokeNight={''} className='inline' />
                   <span className='font-bold float-right'>{formattedDate(new Date(el.date))}</span><br />
                   <StrokeText isDay={1} text={`${Math.round(el.total / el.items[el.items.length - 1].goal * 100)}%`} strokeDay={'#007295'} strokeNight={''} className='inline' />
@@ -153,11 +153,11 @@ export default function Timeline() {
                 </div>
                 {el.items.map((item, i) => (
                   <div key={i}>
-                    <div className='w-2 h-5 bg-[#0092bf] ml-[32px]'></div>
-                    <div className='h-16 grid grid-cols-[26px_1fr_50px_32px] gap-2 items-center text-[#0092bf] bg-white pl-5 pr-4 py-1 border-[3px] border-[#0291bb] rounded-[40px]'>
+                    <div className='w-[5px] h-4 bg-[#0092bf] ml-[32px]'></div>
+                    <div className='h-14 grid grid-cols-[26px_1fr_50px_32px] gap-1 items-center text-[#0092bf] bg-white pl-[19px] pr-3 border-[2px] border-[#0291bb] rounded-[40px]'>
                       <Image className='w-full' alt='cup' width={207} height={399} src={`/cups/${item.cupIndex}.png`} />
                       <span className='font-bold'>{item.amount}ml</span>
-                      <span className='font-bold float-left'>{item.time}</span>
+                      <span className='font-semibold float-left'>{item.time}</span>
                       {(el.date === today) ?
                         <div className='cursor-pointer border border-gray-300 bg-gray-200 hover:bg-gray-300 w-[32px] h-[32px] flex items-center justify-center rounded-full' onClick={() => { deleteData(item.id, item.amount) }}>
                           <Minus className='text-gray-400 p-[2px]' />

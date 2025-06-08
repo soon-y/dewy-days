@@ -215,27 +215,27 @@ export default function Profile() {
 
           <GlassWater className='m-auto my-4' strokeWidth={1} />
 
-          <p className='text-sm/6'>
+          <p className='text-sm/5'>
             If you weigh 70 kg and work out for 60 minutes, and the temperature is 32°C, your daily water intake goal would be:
           </p>
 
-          <table className='m-auto text-sm/6 mt-4 text-left'>
+          <table className='m-auto text-sm/5 mt-4 text-left'>
             <thead>
               <tr>
-                <th className='pr-4'>Weight</th>
-                <td>70 &times; 30 = <b>2100</b> ml</td>
+                <th>Weight</th>
+                <td className='text-sm/4 pl-3 pb-2'>70 &times; 30 = <b>2100</b> ml</td>
               </tr>
               <tr>
-                <th className='pr-4'>Exercise</th>
-                <td>(60 / 30) &times; 355 = <b>710</b> ml</td>
+                <th>Exercise</th>
+                <td className='text-sm/4 pl-3 pb-2'>(60 / 30) &times; 355 = <b>710</b> ml</td>
               </tr>
               <tr>
-                <th className='pr-4'>Heat bonus</th>
-                <td><b>500</b> ml (because it&apos;s above 30°C)</td>
+                <th className='text-sm/4'>Heat bonus</th>
+                <td className='text-sm/4 pl-3 pb-2'><b>500</b> ml (because it&apos;s above 30°C)</td>
               </tr>
               <tr>
-                <th className='pr-4'>Goal</th>
-                <td>2100 + 710 + 500 = <b>3310</b> ml</td>
+                <th>Goal</th>
+                <td className='text-sm/4 pl-3 pb-2'>2100 + 710 + 500 = <b>3310</b> ml</td>
               </tr>
             </thead>
           </table>

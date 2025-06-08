@@ -68,7 +68,7 @@ export default function App() {
         setGoal(json.main[0].goal)
         setWaterIntake(json.main[0].current_amount)
         setCupIndex(json.main[0].cup_index)
-        setWaterHeight(100 - (json.main[0].current_amount / json.main[0].goal * 100))
+        setWaterHeight(json.main[0].current_amount >= json.main[0].goal ? 0 : 100 - (json.main[0].current_amount / json.main[0].goal * 100))
         setHasMounted(true)
       }
     }
@@ -212,7 +212,7 @@ export default function App() {
           </div>}
 
         {hasMounted &&
-          <div className='fixed bottom-0 left-0 h-[6.4rem] z-100 grid grid-cols-[1fr_10px_50px_50px] gap-4 w-full p-6 pl-8'>
+          <div className='fixed bottom-0 left-0 h-[6.4rem] z-100 grid grid-cols-[1fr_10px_50px_50px] gap-2 w-full p-6 pl-7'>
             <StyledSlider
               aria-label="Water Intake"
               valueLabelDisplay="auto"

@@ -20,18 +20,18 @@ const Water: React.FC<Props> = ({ className = '', isDay, total, percent }) => {
       <div className={`w-[200vw] ${className}`}>
         <Link href={'/timeline'}>
           <div className='bg-black'>
-            <StrokeText className='absolute top-[25px] left-6 z-10 text-lg'
+            <StrokeText className='absolute top-[20px] left-6 z-10 text-lg'
               isDay={isDay}
               text={`${total}ml`}
-              strokeDay={'rgb(0, 202, 192)'}
-              strokeNight={'rgb(33, 154, 172)'}
+              strokeDay={'rgb(80, 220, 233)'}
+              strokeNight={'rgb(71, 181, 198)'}
             />
 
-            <StrokeText className='absolute top-[50px] left-6 z-10 text-lg'
+            <StrokeText className='absolute top-[45px] left-6 z-10 text-lg'
               isDay={isDay}
               text={`${percent}%`}
-              strokeDay={'rgb(0, 202, 192)'}
-              strokeNight={'rgb(33, 154, 172)'}
+              strokeDay={'rgb(80, 220, 233)'}
+              strokeNight={'rgb(71, 181, 198)'}
             />
           </div>
         </Link>

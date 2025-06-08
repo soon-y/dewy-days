@@ -59,7 +59,7 @@ const AlarmComp: React.FC<Props> = ({ el, setError, setUpdate }) => {
 
   return (
     <div className='w-full'>
-      <div className='w-full min-h-24 grid grid-cols-[1fr_60px_40px] gap-2 p-2 pb-3 items-center border-b border-[rgba(255,255,255,0.5)]'>
+      <div className='w-full min-h-24 grid grid-cols-[1fr_60px_40px] gap-2 pb-1 items-center border-b border-[rgba(255,255,255,0.5)]'>
         <div>
           <h3 className={`text-4xl my-1 font-light ${on ? '' : 'opacity-50'} ${!past ? '' : 'opacity-50'}`}>
             {el.time.toString().slice(0, 5)}

@@ -18,7 +18,7 @@ const ToggleSwitch = styled(Switch)<Props>(({ svg }) => ({
       color: '#7ED1FF',
       transform: 'translateX(24px)',
       '& .MuiSwitch-thumb:before': {
-        backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path fill="${encodeURIComponent(
+        backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path fill="${encodeURIComponent(
           colors.bg.dark,
         )}" d="${svg}"/></svg>')`,
       },
@@ -44,7 +44,7 @@ const ToggleSwitch = styled(Switch)<Props>(({ svg }) => ({
       top: 0,
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
-      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 512 512"><path fill="${encodeURIComponent(
+      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path fill="${encodeURIComponent(
         '#eaeaea',
       )}" d="${svg}"/></svg>')`,
     },

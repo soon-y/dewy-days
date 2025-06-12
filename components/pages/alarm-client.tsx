@@ -33,6 +33,7 @@ export default function Alarm() {
   const [repeatSat, setRepeatSat] = useState<boolean>(false)
   const [repeatSun, setRepeatSun] = useState<boolean>(false)
   const [openAlarm, setOpenAlarm] = useState<boolean>(false)
+  const [loaded, setLoaded] = useState<boolean>(false)
   const [alarmData, setAlarmData] = useState<AlarmRow[]>([])
   const router = useRouter()
 
@@ -75,6 +76,7 @@ export default function Alarm() {
       .then(data => {
         setAlarmData(data)
         setUpdateData(false)
+        setLoaded(true)
       })
       .catch(() => {
         setError(true)
@@ -120,7 +122,7 @@ export default function Alarm() {
               <ToggleSwitch onChange={(event, val) => setOn(val)} checked={on} svg={svg} />
             </div>
 
-            {on ?
+            {loaded && on &&
               <div className='w-full sm:w-[30rem] mt-4'>
                 <div className='grid grid-cols-[1fr_1fr] w-full'>
                   <div onClick={() => {
@@ -189,10 +191,24 @@ export default function Alarm() {
                   </Tab>
                 }
               </div>
-              :
-              <div className='w-full sm:w-[30rem] grid grid-rows-[60px_1fr] mt-4'>
-                <div></div>
-                <div className='animate-pulse h-80 w-full rounded-2xl bg-[#78d8ff]'></div>
+            }
+
+            {!loaded &&
+              <div className='w-full sm:w-[30rem] mt-4'>
+                <div className='grid grid-cols-[1fr_1fr] w-full'>
+                  <div className='animate-pulse rounded-t-2xl w-full h-16 bg-[#b3e9ff]'></div>
+                  <div></div>
+                </div>
+                <div className='animate-pulse rounded-r-2xl rounded-b-2xl w-full bg-[#b3e9ff] flex flex-col items-center p-6'>
+                  <div className='w-28 h-7 bg-[#8fdfff] rounded-lg animate-pulse'></div>
+                  <div className='w-full h-14 bg-[#8fdfff] rounded-xl mt-4'></div>
+
+                  <div className='w-28 h-7 bg-[#8fdfff] rounded-lg animate-pulse mt-8'></div>
+                  <div className='w-full h-16 bg-[#8fdfff] rounded-lg mt-4'></div>
+
+                  <div className='w-24 h-7 bg-[#8fdfff] rounded-lg animate-pulse mt-8'></div>
+                  <div className='w-56 h-10 bg-[#8fdfff] rounded-lg my-4'></div>
+                </div>
               </div>
             }
           </div>

@@ -4,7 +4,9 @@
 </a> 
 
 ## Introduction
-Dewy Days is a water tracking application I designed as my graduation project in 2015. The interactive prototype was built in 2025.
+Dewy Days is a demonstration of a water tracking application designed to help users monitor and improve their daily hydration habits.
+
+See more details on https://soonyoung.vercel.app/dewy-days
 
 ## Features
 * Engaging UI with character reactions when water is added

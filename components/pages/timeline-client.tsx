@@ -97,20 +97,28 @@ export default function Timeline() {
     const result: Grouped[] = []
 
     for (const item of data) {
-      const dateKey = item.date.toISOString().split('T')[0]
+      const dateKey = item.date.toLocaleDateString('sv-SE')
+
       if (!grouped.has(dateKey)) grouped.set(dateKey, [])
       grouped.get(dateKey)!.push(item)
     }
 
     for (const [date, items] of grouped.entries()) {
       const formattedItems = items
-        .map((item) => ({
-          id: item.id,
-          time: item.date.toTimeString().slice(0, 5),
-          amount: item.amount,
-          cupIndex: item.cup_index,
-          goal: item.goal
-        }))
+        .map((item) => {
+          const time = new Date(item.date).toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          })
+          return {
+            id: item.id,
+            time,
+            amount: item.amount,
+            cupIndex: item.cup_index,
+            goal: item.goal,
+          }
+        })
         .sort((a, b) => a.time.localeCompare(b.time))
 
       const total = formattedItems.reduce((sum, item) => sum + item.amount, 0)
@@ -118,6 +126,7 @@ export default function Timeline() {
     }
 
     result.sort((a, b) => b.date.localeCompare(a.date))
+
     setGroupedData(result)
     return result
   }

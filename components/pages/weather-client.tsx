@@ -5,13 +5,13 @@ import StrokeHeader from '@/components/ui/strokeHeader'
 import Bubble from '@/components/ui/bubble'
 import { MapPinOff, LoaderCircle, X, CloudHail, CloudRainWind, CloudRain, CloudDrizzle, CloudFog, Cloudy, Sun, CloudSun, CloudLightning, Snowflake } from 'lucide-react'
 import WeatherIcon from '@/components/weatherIcon'
-import { getLocation, Coordinates } from '@/app/api/getLocation/getLocation'
-import { fetchTimezone, Location } from '@/app/api/getLocation/getTimezone'
+import { fetchTimezone, Location } from '@/app/api/weather/getTimezone'
+import { getWeatherData } from '@/app/api/weather/getWeatherData'
 import Image from 'next/image'
 import { DailyForecast, HourlyForecast, UVForcast, FilteredDaily, Days } from '@/types'
+import useSWR from 'swr'
 
 export default function Weather() {
-  const url: string = 'https://api.open-meteo.com/v1/forecast'
   const pointer = useRef<HTMLDivElement>(null)
   const clockBg = useRef<HTMLDivElement>(null)
   const d = new Date()
@@ -24,26 +24,46 @@ export default function Weather() {
   const [forecastDataFiltered, setforecastDataFiltered] = useState<FilteredDaily[]>()
   const [airData, setAirData] = useState<UVForcast>()
   const [index, setIndex] = useState<number>(hour)
-  const [daysArray, setDaysArray] = useState<Days[]>()
   const [latitude, setLatitude] = useState<number | null>(null)
   const [longitude, setLongitude] = useState<number | null>(null)
-  const [timezone, setTimezone] = useState<string>("")
+  const [suburb, setSuburb] = useState<string>("")
+  const [daysArray, setDaysArray] = useState<Days[]>()
   const days: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-  const formattedDate: string = d.toLocaleDateString('en-GB', {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'short',
-  })
   const [today, setToday] = useState<string>('')
+  const formattedDate: string = d.toLocaleDateString('en-GB', {
+    weekday: 'short', day: '2-digit', month: 'short',
+  })
+
+  const { data } = useSWR(
+    'local-weather',
+    getWeatherData, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    dedupingInterval: 10 * 60 * 1000,
+  })
+
+  useEffect(() => {
+    if (data) {
+      if (data.airQuality !== null) setAirData(data.airQuality.hourly)
+      if (data.hourly !== null) setHourlyData(data.hourly.hourly)
+      if (data.daily !== null) {
+        setDailyData(data.daily.daily)
+        filterData(data.daily.daily)
+        setLatitude(data.daily.latitude)
+        setLongitude(data.daily.longitude)
+
+        if (data.daily.latitude && data.daily.longitude) {
+          fetchTimezone({ lat: data.daily.latitude, lon: data.daily.longitude }).then(() => {
+            setSuburb(Location.suburb)
+          })
+        }
+      }
+    }
+  }, [data])
 
   useEffect(() => {
     setToday(formattedDate)
-    getLocation().then(() => {
-      if (Coordinates.latitude && Coordinates.longitude) {
-        setLatitude(Coordinates.latitude)
-        setLongitude(Coordinates.longitude)
-      }
-    })
 
     const day = d.getDay()
     const array: Days[] = []
@@ -53,20 +73,6 @@ export default function Weather() {
     }
     setDaysArray(array)
   }, [])
-
-  useEffect(() => {
-    if (latitude && longitude) {
-      fetchTimezone({ lat: latitude, lon: longitude }).then(() => {
-        setTimezone(Location.timezone)
-      })
-    }
-  }, [latitude, longitude])
-
-  useEffect(() => {
-    if (latitude && longitude) {
-      getWeatherData(latitude, longitude, timezone)
-    }
-  }, [timezone])
 
   useEffect(() => {
     if (pointer.current) { pointer.current.style.transform = `rotate(${clock * 30}deg)` }
@@ -88,29 +94,6 @@ export default function Weather() {
       }
     }
   }, [clock, active])
-
-  const getWeatherData = (lat: number, lon: number, time: string) => {
-    const options = { method: 'GET', headers: { accept: 'application/json' } }
-
-    fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&hourly=european_aqi_pm2_5,european_aqi_pm10&timezone=${time}`, options)
-      .then(response => response.json())
-      .then(data => {
-        setAirData(data.hourly)
-      })
-
-    fetch(`${url}?latitude=${lat}&longitude=${lon}&hourly=apparent_temperature,precipitation_probability,weather_code,uv_index,is_day&forecast_days=3&timezone=${time}`, options)
-      .then(response => response.json())
-      .then(data => {
-        setHourlyData(data.hourly)
-      })
-
-    fetch(`${url}?latitude=${lat}&longitude=${lon}&daily=weather_code,apparent_temperature_max,apparent_temperature_min&timezone=${time}`, options)
-      .then(response => response.json())
-      .then(data => {
-        setDailyData(data.daily)
-        filterData(data.daily)
-      })
-  }
 
   const filterData = (data: DailyForecast) => {
     const forecastDataFiltered: FilteredDaily[] = []
@@ -270,9 +253,9 @@ export default function Weather() {
             <p className='w-24 h-4 mb-2 rounded-md bg-[rgba(255,255,255,0.4)] animate-pulse'></p> :
             <p>{today}</p>
           }
-          {Location.suburb === '' ?
+          {suburb === '' ?
             <p className='w-24 h-4 my-1 rounded-md bg-[rgba(255,255,255,0.4)] animate-pulse'></p> :
-            <p>{Location.suburb.toUpperCase()}</p>
+            <p>{suburb.toUpperCase()}</p>
           }
         </div>
 

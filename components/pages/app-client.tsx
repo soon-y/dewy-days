@@ -15,8 +15,8 @@ import Water from '@/components/water'
 import Dewy from '@/components/dewy'
 import DewyBg from '@/components/dewyBg'
 import WeatherIcon from '@/components/weatherIcon'
-import { getLocation, Coordinates } from '@/app/api/getLocation/getLocation'
-import { fetchTimezone, Location } from '@/app/api/getLocation/getTimezone'
+import { getWeatherData } from '@/app/api/weather/getWeatherData'
+import useSWR from 'swr'
 
 export default function App() {
   const [cupIndex, setCupIndex] = useState<number | null>(null)
@@ -26,16 +26,12 @@ export default function App() {
   const [waterHeight, setWaterHeight] = useState<number>(0)
   const [volume, setVolume] = useState<number>(0)
   const [amount, setAmount] = useState<number>(0)
-  const [error, setError] = useState<boolean>(false)
+  const [alert, setAlert] = useState<boolean>(false)
   const [hasMounted, setHasMounted] = useState<boolean>(false)
   const [hurray, setHurray] = useState<boolean>(false)
-  const [latitude, setLatitude] = useState<number | null>(null)
-  const [longitude, setLongitude] = useState<number | null>(null)
-  const [timezone, setTimezone] = useState<string>("")
   const [isDay, setIsDay] = useState<number>(1)
   const [weatherCode, setWeatehrCode] = useState<number>(999)
   const waterWrapper = useRef<HTMLDivElement>(null)
-  const url: string = 'https://api.open-meteo.com/v1/forecast'
   const marks = [{ value: volume, label: volume + 'ml' }]
   const dewyStyle = useSpring({ top: hasMounted ? (waterIntake === 0 ? '100%' : `${waterHeight}%`) : '100%' })
   const waterStyle = useSpring({
@@ -43,24 +39,28 @@ export default function App() {
     top: hasMounted ? (waterIntake === 0 ? '100%' : `${waterHeight}%`) : '100%'
   })
 
-  useEffect(() => {
-    getLocation().then(() => {
-      setLatitude(Coordinates.latitude)
-      setLongitude(Coordinates.longitude)
-    })
+  const { data, error } = useSWR(
+    'local-weather',
+    getWeatherData, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    dedupingInterval: 10 * 60 * 1000,
+  })
 
+  useEffect(() => {
     async function fetchData() {
       const res = await fetch('/api/main/fetch')
       if (!res.ok) {
-        setError(true)
-        setTimeout(() => setError(false), 3000)
+        setAlert(true)
+        setTimeout(() => setAlert(false), 3000)
         return
       }
 
       const json = await res.json()
       if (json === null) {
-        setError(true)
-        setTimeout(() => setError(false), 3000)
+        setAlert(true)
+        setTimeout(() => setAlert(false), 3000)
       } else {
         setReset(json.reset)
         setVolume(json.cupAmount)
@@ -93,34 +93,18 @@ export default function App() {
   }, [resetCurrentAmount])
 
   useEffect(() => {
-    if (latitude && longitude) {
-      fetchTimezone({ lat: latitude, lon: longitude }).then(() => {
-        setTimezone(Location.timezone)
-      })
+    if (data && data.current !== null) {
+      setIsDay(data.current.current.is_day)
+      setWeatehrCode(data.current.current.weather_code)
     }
-  }, [latitude, longitude])
+  }, [data])
 
   useEffect(() => {
-    const getWeatherData = async (latitude: number | null, longitude: number | null, timezone: string) => {
-      try {
-        const response = await fetch(
-          `${url}?latitude=${latitude}&longitude=${longitude}&current=is_day,weather_code&timezone=${timezone}`,
-          { method: 'GET', headers: { accept: 'application/json' } }
-        )
-        if (response.ok) {
-          const data = await response.json()
-          setIsDay(data.current.is_day)
-          setWeatehrCode(data.current.weather_code)
-        }
-      } catch (error) {
-        console.error(error)
-      }
+    if (error) {
+      setAlert(true)
+      setTimeout(() => { setAlert(false) }, 3000)
     }
-
-    if (latitude && longitude && timezone !== '') {
-      getWeatherData(latitude, longitude, timezone)
-    }
-  }, [timezone])
+  }, [error])
 
   const addWaterIntake = () => {
     const intake = waterIntake + amount
@@ -221,7 +205,7 @@ export default function App() {
               max={volume}
               marks={marks}
               value={amount}
-              onChange={(event, val) => { if (typeof val === 'number') { setAmount(val) }}}
+              onChange={(event, val) => { if (typeof val === 'number') { setAmount(val) } }}
             />
             <div></div>
             <div onClick={add}>
@@ -238,7 +222,7 @@ export default function App() {
           </div>}
         {hasMounted && <Navigation />}
       </div>
-      {error && <Alert />}
+      {alert && <Alert />}
     </>
   )
 }

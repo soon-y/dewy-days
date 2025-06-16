@@ -63,6 +63,96 @@ export interface AlarmRow {
   on: boolean
 }
 
+export interface current {
+  current: {
+    interval: number
+    is_day: number
+    weather_code: number
+    time: string
+  }
+  current_units: {
+    interval: string
+    is_day: string
+    time: string
+    weather_code: string
+    elevation: number
+    generationtime_ms: number
+  }
+  latitude: number
+  longitude: number
+  timezone: string
+  timezone_abbreviation: string
+  utc_offset_seconds: number
+}
+
+export interface Daily {
+  daily: {
+    apparent_temperature_max: number[]
+    apparent_temperature_min: number[]
+    time: string[]
+    weather_code: number[]
+  }
+  daily_unit: {
+    apparent_temperature_max: string
+    apparent_temperature_min: string
+    time: string
+    weather_code: string
+  }
+  elevation: number
+  generationtime_ms: number
+  latitude: number
+  longitude: number
+  timezone: string
+  timezone_abbreviation: string
+  utc_offset_seconds: number
+}
+
+export interface Hourly {
+  hourly: {
+    apparent_temperature: number[]
+    is_day: number[]
+    precipitation_probability: number[]
+    time: string[]
+    uv_index: number[]
+    weather_code: number[]
+  }
+  hourly_units: {
+    apparent_temperature: string
+    is_day: string
+    precipitation_probability: string
+    time: string
+    uv_index: string
+    weather_code: string
+  }
+  elevation: number
+  generationtime_ms: number
+  latitude: number
+  longitude: number
+  timezone: string
+  timezone_abbreviation: string
+  utc_offset_seconds: number
+}
+
+export interface airQuality {
+  hourly: {
+    european_aqi_pm2_5: number[]
+    european_aqi_pm10: number[]
+    time: string[]
+  }
+  hourly_units: {
+    european_aqi_pm2_5: string
+    european_aqi_pm10: string
+    time: string
+  }
+  elevation: number
+  generationtime_ms: number
+  latitude: number
+  longitude: number
+  timezone: string
+  timezone_abbreviation: string
+  utc_offset_seconds: number
+}
+
 export interface DailyForecast {
   apparent_temperature_max: number[]
   apparent_temperature_min: number[]

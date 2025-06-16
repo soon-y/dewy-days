@@ -9,9 +9,9 @@ import NumInput from '@/components/ui/numInput'
 import Alert from '@/components/alert'
 import { ToggleSwitch } from '@/components/ui/switch'
 import { X, CircleHelp, MapPinOff, GlassWater } from 'lucide-react'
-import { getLocation, Coordinates } from '@/app/api/getLocation/getLocation'
-import { fetchTimezone, Location } from '@/app/api/getLocation/getTimezone'
+import { getWeatherData } from '@/app/api/weather/getWeatherData'
 import Modal from '@/components/Modal'
+import useSWR from 'swr'
 
 export default function Profile() {
   const router = useRouter()
@@ -30,17 +30,23 @@ export default function Profile() {
   const manualIcon = 'M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z'
   const weatherIcon = "M361.5 1.2c5 2.1 8.6 6.6 9.6 11.9L391 121l107.9 19.8c5.3 1 9.8 4.6 11.9 9.6s1.5 10.7-1.6 15.2L446.9 256l62.3 90.3c3.1 4.5 3.7 10.2 1.6 15.2s-6.6 8.6-11.9 9.6L391 391 371.1 498.9c-1 5.3-4.6 9.8-9.6 11.9s-10.7 1.5-15.2-1.6L256 446.9l-90.3 62.3c-4.5 3.1-10.2 3.7-15.2 1.6s-8.6-6.6-9.6-11.9L121 391 13.1 371.1c-5.3-1-9.8-4.6-11.9-9.6s-1.5-10.7 1.6-15.2L65.1 256 2.8 165.7c-3.1-4.5-3.7-10.2-1.6-15.2s6.6-8.6 11.9-9.6L121 121 140.9 13.1c1-5.3 4.6-9.8 9.6-11.9s10.7-1.5 15.2 1.6L256 65.1 346.3 2.8c4.5-3.1 10.2-3.7 15.2-1.6zM160 256a96 96 0 1 1 192 0 96 96 0 1 1 -192 0zm224 0a128 128 0 1 0 -256 0 128 128 0 1 0 256 0z"
   const skeletonStyle = 'w-52 h-14 my-3 bg-[#7fdcfb] inline-block rounded-md animate-pulse'
-  const url: string = 'https://api.open-meteo.com/v1/forecast'
-  const [latitude, setLatitude] = useState<number | null>(null)
-  const [longitude, setLongitude] = useState<number | null>(null)
-  const [timezone, setTimezone] = useState<string>("")
+
+  const { data } = useSWR(
+    'local-weather',
+    getWeatherData, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    dedupingInterval: 10 * 60 * 1000,
+  })
 
   useEffect(() => {
-    getLocation().then(() => {
-      setLatitude(Coordinates.latitude)
-      setLongitude(Coordinates.longitude)
-    })
+    if (data) {
+      if (data.daily !== null) setTemperate(Math.max(...data.daily.daily.apparent_temperature_max))
+    }
+  }, [data])
 
+  useEffect(() => {
     async function fetchData() {
       const res = await fetch('/api/profile/fetch')
       if (!res.ok) {
@@ -67,35 +73,6 @@ export default function Profile() {
 
     fetchData()
   }, [])
-
-  useEffect(() => {
-    if (latitude && longitude) {
-      fetchTimezone({ lat: latitude, lon: longitude }).then(() => {
-        setTimezone(Location.timezone)
-      })
-    }
-  }, [latitude, longitude])
-
-  useEffect(() => {
-    const getWeatherData = async (latitude: number | null, longitude: number | null, timezone: string) => {
-      try {
-        const response = await fetch(
-          `${url}?latitude=${latitude}&longitude=${longitude}&daily=apparent_temperature_max&timezone=${timezone}`,
-          { method: 'GET', headers: { accept: 'application/json' } }
-        )
-        if (response.ok) {
-          const data = await response.json()
-          setTemperate(data.daily.apparent_temperature_max[0])
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    if (latitude && longitude && timezone !== '') {
-      getWeatherData(latitude, longitude, timezone)
-    }
-  }, [timezone])
 
   useEffect(() => {
     const extraIntake = tempMode && highestTemp != null && highestTemp >= 30 ? 500 : 0
@@ -155,7 +132,7 @@ export default function Profile() {
                 :
                 <>
                   <div className='w-56 grid grid-cols-[1fr_56px] gap-2 items-center m-4'>
-                    {latitude !== null ?
+                    {data?.daily !== null ?
                       <>
                         {tempMode ? <span className='font-bold'>Temperature {highestTemp}°C</span> : <span className='font-bold'>Temperature Mode</span>}
                         <ToggleSwitch onChange={(event, val) => setTempMode(val)} checked={tempMode} svg={weatherIcon} />

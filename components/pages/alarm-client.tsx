@@ -12,7 +12,7 @@ import StrokeSubText from '@/components/ui/strokeSubText'
 import { StyledRangeSlider } from '@/components/ui/rangeSlider'
 import NumInput from '@/components/ui/numInput'
 import AlarmComp from '@/components/alarmComp'
-import { X } from 'lucide-react'
+import { X, LoaderCircle } from 'lucide-react'
 import AddAlarm from './addAlarm'
 import { AlarmRow } from "@/types"
 import Alert from '@/components/alert'
@@ -179,9 +179,12 @@ export default function Alarm() {
 
                 {tabIndex === 1 &&
                   <Tab className='rounded-l-2xl'>
-                    {updateData === false && (alarmData.map((el, index) => (
-                      <AlarmComp el={el} key={index} setError={setError} setUpdate={setUpdateData} />
-                    )))}
+                    {updateData === false ?
+                      (alarmData.map((el, index) => (
+                        <AlarmComp el={el} key={index} setError={setError} setUpdate={setUpdateData} />
+                      ))) :
+                      <LoaderCircle className='animate-spin w-8 h-8 my-6' />
+                    }
 
                     <button disabled={false} className='cursor-pointer mt-5 my-2 text-xl px-[14px] py-[5px] rounded-full border-1 border-white bg-[#b0e9ff] hover:bg-[#10b4f5] text-[#0898da] hover:text-white' onClick={
                       () => { setOpenAlarm(true) }

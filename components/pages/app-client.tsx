@@ -39,7 +39,7 @@ export default function App() {
     top: hasMounted ? (waterIntake === 0 ? '100%' : `${waterHeight}%`) : '100%'
   })
 
-  const { data, error } = useSWR(
+  const { data } = useSWR(
     'local-weather',
     getWeatherData, {
     revalidateIfStale: false,

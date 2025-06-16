@@ -16,6 +16,7 @@ export interface ProfileRow {
   weight: number
   activity_mode: boolean
   duration: number
+  temp_mode: boolean
 }
 
 export interface TimelineRow {

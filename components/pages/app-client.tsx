@@ -161,7 +161,7 @@ export default function App() {
             strokeNight={colors.night.stroke}
           />
           {goal === 0 ?
-            <div className='fixed top-[165px] mt-3 bg-[#ebfaff] animate-pulse w-16 h-5 rounded-md'></div> :
+            <div className={`fixed top-[165px] mt-3 animate-pulse w-16 h-5 rounded-md ${isDay === 1 ? 'bg-[#ebfaff]' : 'bg-[#5e99d0]'}`}></div> :
             <StrokeText className='fixed top-[165px] mt-2 text-lg'
               isDay={isDay}
               text={`${goal}ml`}
@@ -190,9 +190,9 @@ export default function App() {
             </div>
           </>
         ) :
-          <div className='fixed w-full h-full flex flex-col left-0 top-0 items-center justify-center animate-pulse'>
+          <div className='fixed w-full h-full flex flex-col left-0 top-0 items-center justify-center'>
             <Image className='w-40' alt='loading' src={'/dewy/dewy_smile.png'} width={671} height={653} priority />
-            <p className='text-[#05aee6] text-xl mt-4 font-[family-name:var(--font-nunito)]'>Loading</p>
+            <p className={`animate-pulse text-xl mt-4 font-[family-name:var(--font-nunito)] ${isDay === 1 ? 'text-[#05aee6]' : 'text-white'}`}>Loading</p>
           </div>}
 
         {hasMounted &&

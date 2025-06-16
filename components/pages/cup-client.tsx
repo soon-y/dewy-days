@@ -10,40 +10,18 @@ import AmountPicker from '@/components/ui/amountPicker'
 import Alert from '@/components/alert'
 import { X } from 'lucide-react'
 import { useSwipeable } from 'react-swipeable'
+import { CupRow } from "@/types"
 
-export default function Cups() {
+export default function Cups({ cups, main }: { cups: CupRow[], main: { cup_index: number } }) {
   const router = useRouter()
-  const [cupArray, setCupArray] = useState<{ id: number, amount: number }[]>([])
-  const [cupIndex, setCupIndex] = useState<number>(0)
+  const cupArray: CupRow[] = cups
+  const [cupIndex, setCupIndex] = useState<number>(main.cup_index)
   const [amount, setAmount] = useState<number>(0)
   const [value, setValue] = useState<number>(0)
   const [error, setError] = useState<boolean>(false)
   const slideNum: number[] = [25, -25, -75, -125]
   const slideCup = useSpring({ transform: `translateX(${slideNum[cupIndex]}vw)` })
   const cupStyle: string = 'w-full h-[calc(100vh-330px)] min-h-[30rem] bg-contain bg-no-repeat bg-center duration-500 cursor-grab'
-
-  useEffect(() => {
-    async function fetchData() {
-      const res = await fetch('/api/cup/fetch')
-      if (!res.ok) {
-        setError(true)
-        setTimeout(() => setError(false), 3000)
-        return
-      }
-
-      const json = await res.json()
-      if (json === null) {
-        setError(true)
-        setTimeout(() => setError(false), 3000)
-      } else {
-        setCupArray(json.cups)
-        setCupIndex(json.main[0].cup_index)
-        setAmount(json.cups[json.main[0].cup_index].amount)
-        setValue(json.cups[json.main[0].cup_index].amount)
-      }
-    }
-    fetchData()
-  }, [])
 
   useEffect(() => {
     if (cupArray.length > 0) setAmount(cupArray[cupIndex].amount)

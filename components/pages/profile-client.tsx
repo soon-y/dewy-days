@@ -109,7 +109,7 @@ export default function Profile({ data, initial }: { data: ProfileRow, initial: 
                 :
                 <>
                   <div className='w-56 grid grid-cols-[1fr_56px] gap-2 items-center m-4'>
-                    {data?.daily !== null ?
+                    {weatherData?.daily !== null ?
                       <>
                         {tempMode ? <span className='font-bold'>Temperature {highestTemp}°C</span> : <span className='font-bold'>Temperature Mode</span>}
                         <ToggleSwitch onChange={(event, val) => setTempMode(val)} checked={tempMode} svg={weatherIcon} />

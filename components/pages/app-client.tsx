@@ -85,8 +85,8 @@ export default function App() {
           if (res.ok) {
             setWaterIntake(0)
           } else {
-            setError(true)
-            setTimeout(() => setError(false), 3000)
+            setAlert(true)
+            setTimeout(() => setAlert(false), 3000)
           }
         })
     }
@@ -100,11 +100,11 @@ export default function App() {
   }, [data])
 
   useEffect(() => {
-    if (error) {
+    if (alert) {
       setAlert(true)
       setTimeout(() => { setAlert(false) }, 3000)
     }
-  }, [error])
+  }, [alert])
 
   const addWaterIntake = () => {
     const intake = waterIntake + amount
@@ -139,8 +139,8 @@ export default function App() {
     if (result.success) {
       addWaterIntake()
     } else {
-      setError(true)
-      setTimeout(() => setError(false), 3000)
+      setAlert(true)
+      setTimeout(() => setAlert(false), 3000)
     }
   }
 

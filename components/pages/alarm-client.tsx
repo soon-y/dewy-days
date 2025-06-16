@@ -14,74 +14,43 @@ import NumInput from '@/components/ui/numInput'
 import AlarmComp from '@/components/alarmComp'
 import { X, LoaderCircle } from 'lucide-react'
 import AddAlarm from './addAlarm'
-import { AlarmRow } from "@/types"
+import { AlarmRow, AlarmSettingRow } from "@/types"
 import Alert from '@/components/alert'
 
-export default function Alarm() {
+export default function Alarm({ alarmSetting, alarm }: { alarmSetting: AlarmSettingRow, alarm: AlarmRow[] }) {
   const svg = "M224 0c-17.7 0-32 14.3-32 32l0 19.2C119 66 64 130.6 64 208l0 18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416l384 0c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8l0-18.8c0-77.4-55-142-128-156.8L256 32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3l-64 0-64 0c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z"
-  const [error, setError] = useState<boolean>(false)
+  const [alert, setAlert] = useState<boolean>(false)
   const [updateData, setUpdateData] = useState<boolean>(false)
-  const [on, setOn] = useState<boolean>(false)
-  const [tabIndex, setTabIndex] = useState<number>(1)
-  const [timeRange, setTimeRange] = useState<number[]>([0, 0])
-  const [interval, setInterval] = useState<number>(0)
-  const [repeatMon, setRepeatMon] = useState<boolean>(false)
-  const [repeatTue, setRepeatTue] = useState<boolean>(false)
-  const [repeatWed, setRepeatWed] = useState<boolean>(false)
-  const [repeatThu, setRepeatThu] = useState<boolean>(false)
-  const [repeatFri, setRepeatFri] = useState<boolean>(false)
-  const [repeatSat, setRepeatSat] = useState<boolean>(false)
-  const [repeatSun, setRepeatSun] = useState<boolean>(false)
+  const [on, setOn] = useState<boolean>(alarmSetting.on)
+  const [tabIndex, setTabIndex] = useState<number>(alarmSetting.tab_index)
+  const [timeRange, setTimeRange] = useState<number[]>([alarmSetting.range_start, alarmSetting.range_end])
+  const [interval, setInterval] = useState<number>(alarmSetting.interval)
+  const [repeatMon, setRepeatMon] = useState<boolean>(alarmSetting.repeat_mon)
+  const [repeatTue, setRepeatTue] = useState<boolean>(alarmSetting.repeat_tue)
+  const [repeatWed, setRepeatWed] = useState<boolean>(alarmSetting.repeat_wed)
+  const [repeatThu, setRepeatThu] = useState<boolean>(alarmSetting.repeat_thu)
+  const [repeatFri, setRepeatFri] = useState<boolean>(alarmSetting.repeat_fri)
+  const [repeatSat, setRepeatSat] = useState<boolean>(alarmSetting.repeat_sat)
+  const [repeatSun, setRepeatSun] = useState<boolean>(alarmSetting.repeat_sun)
   const [openAlarm, setOpenAlarm] = useState<boolean>(false)
-  const [loaded, setLoaded] = useState<boolean>(false)
-  const [alarmData, setAlarmData] = useState<AlarmRow[]>([])
+  const [loaded, setLoaded] = useState<boolean>(true)
+  const [alarmData, setAlarmData] = useState<AlarmRow[]>(alarm)
   const router = useRouter()
 
   useEffect(() => {
-    setUpdateData(true)
-
-    async function fetchData() {
-      const res = await fetch('/api/alarm/fetchAlarmSetting')
-      if (!res.ok) {
-        setError(true)
-        setTimeout(() => setError(false), 3000)
-        return
-      }
-
-      const json = await res.json()
-      if (json === null) {
-        setError(true)
-        setTimeout(() => setError(false), 3000)
-      } else {
-        setOn(json[0].on)
-        setTabIndex(json[0].tab_index)
-        setTimeRange([json[0].range_start, json[0].range_end])
-        setInterval(json[0].interval)
-        setRepeatMon(json[0].repeat_mon)
-        setRepeatTue(json[0].repeat_tue)
-        setRepeatWed(json[0].repeat_wed)
-        setRepeatThu(json[0].repeat_thu)
-        setRepeatFri(json[0].repeat_fri)
-        setRepeatSat(json[0].repeat_sat)
-        setRepeatSun(json[0].repeat_sun)
-      }
+    if (updateData) {
+      fetch('/api/alarm/fetch')
+        .then(res => res.json())
+        .then(data => {
+          setAlarmData(data)
+          setUpdateData(false)
+          setLoaded(true)
+        })
+        .catch(() => {
+          setAlert(true)
+          setTimeout(() => setAlert(false), 3000)
+        })
     }
-
-    fetchData()
-  }, [])
-
-  useEffect(() => {
-    fetch('/api/alarm/fetch')
-      .then(res => res.json())
-      .then(data => {
-        setAlarmData(data)
-        setUpdateData(false)
-        setLoaded(true)
-      })
-      .catch(() => {
-        setError(true)
-        setTimeout(() => setError(false), 3000)
-      })
   }, [updateData])
 
   const update = async () => {
@@ -97,8 +66,8 @@ export default function Alarm() {
     if (result.success) {
       router.push('/')
     } else {
-      setError(true)
-      setTimeout(() => setError(false), 3000)
+      setAlert(true)
+      setTimeout(() => setAlert(false), 3000)
     }
   }
 
@@ -181,7 +150,7 @@ export default function Alarm() {
                   <Tab className='rounded-l-2xl'>
                     {updateData === false ?
                       (alarmData.map((el, index) => (
-                        <AlarmComp el={el} key={index} setError={setError} setUpdate={setUpdateData} />
+                        <AlarmComp el={el} key={index} setAlert={setAlert} setUpdate={setUpdateData} />
                       ))) :
                       <LoaderCircle className='animate-spin w-8 h-8 my-6' />
                     }
@@ -219,7 +188,7 @@ export default function Alarm() {
       </div>
       <AddAlarm className={`${openAlarm ? 'translate-x-0' : 'translate-x-full'} duration-500`}
         setAddAlarm={setOpenAlarm} openAlarm={openAlarm} setUpdate={setUpdateData} />
-      {error && <Alert />}
+      {alert && <Alert />}
     </>
   )
 }

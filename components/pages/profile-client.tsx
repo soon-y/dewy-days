@@ -12,26 +12,27 @@ import { X, CircleHelp, MapPinOff, GlassWater } from 'lucide-react'
 import { getWeatherData } from '@/app/api/weather/getWeatherData'
 import Modal from '@/components/Modal'
 import useSWR from 'swr'
+import { ProfileRow } from '@/types'
 
-export default function Profile() {
+export default function Profile({ data, initial }: { data: ProfileRow, initial: { goal: number } }) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [loaded, setLoaded] = useState<boolean>(false)
-  const [weight, setWeight] = useState<number>(0)
-  const [duration, setDuration] = useState<number>(0)
-  const [activity, setActivity] = useState<boolean>(false)
+  const [weight, setWeight] = useState<number>(data.weight)
+  const [duration, setDuration] = useState<number>(data.duration)
+  const [activity, setActivity] = useState<boolean>(data.activity_mode)
   const [highestTemp, setTemperate] = useState<number | null>(null)
-  const [tempMode, setTempMode] = useState<boolean>(false)
-  const [manual, setManual] = useState<boolean>(false)
-  const [manualGoal, setManualGoal] = useState<number>(0)
-  const [goal, setGoal] = useState(0)
-  const [error, setError] = useState<boolean>(false)
+  const [tempMode, setTempMode] = useState<boolean>(data.temp_mode)
+  const [manual, setManual] = useState<boolean>(data.manual)
+  const [manualGoal, setManualGoal] = useState<number>(initial.goal)
+  const [goal, setGoal] = useState(initial.goal)
+  const [alert, setAlert] = useState<boolean>(false)
   const activeIcon = 'M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288l111.5 0L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7l-111.5 0L349.4 44.6'
   const manualIcon = 'M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z'
   const weatherIcon = "M361.5 1.2c5 2.1 8.6 6.6 9.6 11.9L391 121l107.9 19.8c5.3 1 9.8 4.6 11.9 9.6s1.5 10.7-1.6 15.2L446.9 256l62.3 90.3c3.1 4.5 3.7 10.2 1.6 15.2s-6.6 8.6-11.9 9.6L391 391 371.1 498.9c-1 5.3-4.6 9.8-9.6 11.9s-10.7 1.5-15.2-1.6L256 446.9l-90.3 62.3c-4.5 3.1-10.2 3.7-15.2 1.6s-8.6-6.6-9.6-11.9L121 391 13.1 371.1c-5.3-1-9.8-4.6-11.9-9.6s-1.5-10.7 1.6-15.2L65.1 256 2.8 165.7c-3.1-4.5-3.7-10.2-1.6-15.2s6.6-8.6 11.9-9.6L121 121 140.9 13.1c1-5.3 4.6-9.8 9.6-11.9s10.7-1.5 15.2 1.6L256 65.1 346.3 2.8c4.5-3.1 10.2-3.7 15.2-1.6zM160 256a96 96 0 1 1 192 0 96 96 0 1 1 -192 0zm224 0a128 128 0 1 0 -256 0 128 128 0 1 0 256 0z"
   const skeletonStyle = 'w-52 h-14 my-3 bg-[#7fdcfb] inline-block rounded-md animate-pulse'
 
-  const { data } = useSWR(
+  const { data: weatherData } = useSWR(
     'local-weather',
     getWeatherData, {
     revalidateIfStale: false,
@@ -41,37 +42,13 @@ export default function Profile() {
   })
 
   useEffect(() => {
-    if (data) {
-      if (data.daily !== null) setTemperate(Math.max(...data.daily.daily.apparent_temperature_max))
+    if (weatherData) {
+      if (weatherData.daily !== null) setTemperate(Math.max(...weatherData.daily.daily.apparent_temperature_max))
     }
-  }, [data])
+  }, [weatherData])
 
   useEffect(() => {
-    async function fetchData() {
-      const res = await fetch('/api/profile/fetch')
-      if (!res.ok) {
-        setError(true)
-        setTimeout(() => setError(false), 3000)
-        return
-      }
-
-      const json = await res.json()
-      if (json === null) {
-        setError(true)
-        setTimeout(() => setError(false), 3000)
-      } else {
-        setManualGoal(json.goal[0].goal)
-        setGoal(json.goal[0].goal)
-        setWeight(json.profile[0].weight)
-        setDuration(json.profile[0].duration)
-        setActivity(json.profile[0].activity_mode)
-        setTempMode(json.profile[0].temp_mode)
-        setManual(json.profile[0].manual)
-        setLoaded(true)
-      }
-    }
-
-    fetchData()
+    setLoaded(true)
   }, [])
 
   useEffect(() => {
@@ -100,8 +77,8 @@ export default function Profile() {
     if (result.success) {
       router.push('/')
     } else {
-      setError(true)
-      setTimeout(() => setError(false), 3000)
+      setAlert(true)
+      setTimeout(() => setAlert(false), 3000)
     }
   }
 
@@ -218,7 +195,7 @@ export default function Profile() {
           </table>
         </div>
       </Modal>
-      {error && <Alert />}
+      {alert && <Alert />}
     </div>
   )
 }

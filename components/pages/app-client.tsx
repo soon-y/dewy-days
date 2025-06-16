@@ -17,29 +17,29 @@ import DewyBg from '@/components/dewyBg'
 import WeatherIcon from '@/components/weatherIcon'
 import { getWeatherData } from '@/app/api/weather/getWeatherData'
 import useSWR from 'swr'
+import { MainRow } from "@/types"
 
-export default function App() {
-  const [cupIndex, setCupIndex] = useState<number | null>(null)
-  const [resetCurrentAmount, setReset] = useState<boolean>(false)
-  const [goal, setGoal] = useState<number>(0)
-  const [waterIntake, setWaterIntake] = useState<number>(0)
-  const [waterHeight, setWaterHeight] = useState<number>(0)
-  const [volume, setVolume] = useState<number>(0)
-  const [amount, setAmount] = useState<number>(0)
+export default function App({ main, cup, reset, waterHeightInit }: { main: MainRow, cup: { amount: number }, reset: boolean, waterHeightInit: number }) {
+  const cupIndex: number = main.cup_index
+  const goal: number = main.goal
+  const volume: number = cup.amount
+  const marks = [{ value: volume, label: volume + 'ml' }]
+  const [waterIntake, setWaterIntake] = useState<number>(reset ? 0 : main.current_amount)
+  const [waterHeight, setWaterHeight] = useState<number>(waterHeightInit)
+  const [amount, setAmount] = useState<number>(cup.amount)
   const [alert, setAlert] = useState<boolean>(false)
   const [hasMounted, setHasMounted] = useState<boolean>(false)
   const [hurray, setHurray] = useState<boolean>(false)
   const [isDay, setIsDay] = useState<number>(1)
   const [weatherCode, setWeatehrCode] = useState<number>(999)
   const waterWrapper = useRef<HTMLDivElement>(null)
-  const marks = [{ value: volume, label: volume + 'ml' }]
   const dewyStyle = useSpring({ top: hasMounted ? (waterIntake === 0 ? '100%' : `${waterHeight}%`) : '100%' })
   const waterStyle = useSpring({
     display: hasMounted ? (waterIntake === 0 ? 'none' : 'block') : 'block',
     top: hasMounted ? (waterIntake === 0 ? '100%' : `${waterHeight}%`) : '100%'
   })
 
-  const { data } = useSWR(
+  const { data: weatherData } = useSWR(
     'local-weather',
     getWeatherData, {
     revalidateIfStale: false,
@@ -49,55 +49,15 @@ export default function App() {
   })
 
   useEffect(() => {
-    async function fetchData() {
-      const res = await fetch('/api/main/fetch')
-      if (!res.ok) {
-        setAlert(true)
-        setTimeout(() => setAlert(false), 3000)
-        return
-      }
-
-      const json = await res.json()
-      if (json === null) {
-        setAlert(true)
-        setTimeout(() => setAlert(false), 3000)
-      } else {
-        setReset(json.reset)
-        setVolume(json.cupAmount)
-        setAmount(json.cupAmount)
-        setGoal(json.main[0].goal)
-        setWaterIntake(json.main[0].current_amount)
-        setCupIndex(json.main[0].cup_index)
-        setWaterHeight(json.main[0].current_amount >= json.main[0].goal ? 0 : 100 - (json.main[0].current_amount / json.main[0].goal * 100))
-        setHasMounted(true)
-      }
-    }
-
-    fetchData()
+    setHasMounted(true)
   }, [])
 
   useEffect(() => {
-    if (resetCurrentAmount) {
-      fetch('/api/main/updateCurrentAmount', {
-        method: 'POST',
-      })
-        .then(res => {
-          if (res.ok) {
-            setWaterIntake(0)
-          } else {
-            setAlert(true)
-            setTimeout(() => setAlert(false), 3000)
-          }
-        })
+    if (weatherData && weatherData.current !== null) {
+      setIsDay(weatherData.current.current.is_day)
+      setWeatehrCode(weatherData.current.current.weather_code)
     }
-  }, [resetCurrentAmount])
-
-  useEffect(() => {
-    if (data && data.current !== null) {
-      setIsDay(data.current.current.is_day)
-      setWeatehrCode(data.current.current.weather_code)
-    }
-  }, [data])
+  }, [weatherData])
 
   useEffect(() => {
     if (alert) {

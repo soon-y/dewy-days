@@ -4,11 +4,11 @@ import { AlarmRow } from "@/types"
 
 interface Props {
   el: AlarmRow
-  setError: React.Dispatch<React.SetStateAction<boolean>>
+  setAlert: React.Dispatch<React.SetStateAction<boolean>>
   setUpdate: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const AlarmComp: React.FC<Props> = ({ el, setError, setUpdate }) => {
+const AlarmComp: React.FC<Props> = ({ el, setAlert, setUpdate }) => {
   const [on, setOn] = useState<boolean>(el.on)
   const [past, setPast] = useState<boolean>(false)
   const style: string = `m-1 bg-white rounded-md text-[#0898da] font-bold px-[6px] py-[1px] text-sm ${on ? '' : 'opacity-50'}`
@@ -38,8 +38,8 @@ const AlarmComp: React.FC<Props> = ({ el, setError, setUpdate }) => {
     if (result.success) {
       setUpdate(true)
     } else {
-      setError(true)
-      setTimeout(() => setError(false), 3000)
+      setAlert(true)
+      setTimeout(() => setAlert(false), 3000)
     }
   }
 
@@ -52,8 +52,8 @@ const AlarmComp: React.FC<Props> = ({ el, setError, setUpdate }) => {
     if (result.success) {
       setUpdate(true)
     } else {
-      setError(true)
-      setTimeout(() => setError(false), 3000)
+      setAlert(true)
+      setTimeout(() => setAlert(false), 3000)
     }
   }
 

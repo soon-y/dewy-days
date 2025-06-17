@@ -26,7 +26,8 @@ export default async function Home() {
     const lastDate = new Date(timeline[timeline.length - 1].date).toLocaleDateString()
     const today = new Date().toLocaleDateString()
     const reset: boolean = today.includes(lastDate) ? false : true
-    const waterHeight = main[0].current_amount >= main[0].goal ? 0 : 100 - (main[0].current_amount / main[0].goal * 100)
+    const waterHeight = reset? 100 : main[0].current_amount >= main[0].goal ? 0 : 100 - (main[0].current_amount / main[0].goal * 100)
+
 
     return <App main={main[0]} cup={cup[0]} reset={reset} waterHeightInit={waterHeight} />
   } catch (error) {

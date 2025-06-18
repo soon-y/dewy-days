@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import Alarm from '@/components/pages/alarm-client'
 import { neon } from '@neondatabase/serverless'
 import { AlarmSettingRow, AlarmRow } from "@/types"

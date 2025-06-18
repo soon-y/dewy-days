@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import App from '@/components/pages/app-client'
 import { neon } from '@neondatabase/serverless'
 import { MainRow } from "@/types"

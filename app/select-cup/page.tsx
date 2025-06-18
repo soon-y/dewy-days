@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import Cups from '@/components/pages/cup-client'
 import { neon } from '@neondatabase/serverless'
 import { CupRow } from "@/types"

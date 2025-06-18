@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import Profile from '@/components/pages/profile-client'
 import { neon } from '@neondatabase/serverless'
 import { ProfileRow } from "@/types"

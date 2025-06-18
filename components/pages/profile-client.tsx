@@ -43,7 +43,7 @@ export default function Profile({ data, initial }: { data: ProfileRow, initial: 
 
   useEffect(() => {
     if (weatherData) {
-      if (weatherData.daily !== null) setTemperate(Math.max(...weatherData.daily.daily.apparent_temperature_max))
+      if (weatherData.daily !== null) setTemperate(weatherData.daily.daily.apparent_temperature_max[0])
     }
   }, [weatherData])
 

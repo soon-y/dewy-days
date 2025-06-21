@@ -50,6 +50,8 @@ export default function App({ main, cup, reset, waterHeightInit }: { main: MainR
   })
 
   useEffect(() => {
+    setHasMounted(true)
+    
     async function fetchData() {
       const res = await fetch('/api/main/fetch')
       if (!res.ok) {
@@ -69,7 +71,6 @@ export default function App({ main, cup, reset, waterHeightInit }: { main: MainR
         setWaterIntake(json.main[0].current_amount)
         setCupIndex(json.main[0].cup_index)
         setWaterHeight(100 - (json.main[0].current_amount / json.main[0].goal * 100))
-        setHasMounted(true)
       }
     }
 

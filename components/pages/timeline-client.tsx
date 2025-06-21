@@ -156,48 +156,43 @@ export default function Timeline() {
             <X />
           </Bubble>
         </div>
-
-        {!loading ?
-          <div className='w-full sm:w-[30rem] m-auto'>
-            {!updateData ?
-              groupedData?.map((el, i) => (
-                <div key={i}>
-                  <div className='text-base/5 px-4 pt-[10px] pb-[8px] rounded-xl mt-7 bg-[#0092bf]'>
-                    <StrokeText isDay={1} text={`${el.total}ml`} strokeDay={'#007295'} strokeNight={''} className='inline' />
-                    <span className='font-bold float-right'>{formattedDate(new Date(el.date))}</span><br />
-                    <StrokeText isDay={1} text={`${Math.round(el.total / el.items[el.items.length - 1].goal * 100)}%`} strokeDay={'#007295'} strokeNight={''} className='inline' />
-                    <span className='text-sm float-right'>{el.items[el.items.length - 1].goal}ml</span>
-                  </div>
-                  {el.items.map((item, i) => (
-                    <div key={i}>
-                      <div className='w-[5px] h-4 bg-[#0092bf] ml-[30px]'></div>
-                      <div className='h-[52px] grid grid-cols-[24px_1fr_45px_28px] gap-2 items-center text-[#0092bf] bg-white pl-[19px] pr-3 border-[2px] border-[#0291bb] rounded-[40px]'>
-                        <Image className='w-full' alt='cup' width={207} height={399} src={`/cups/${item.cupIndex}.png`} />
-                        <span className='font-bold'>{item.amount}ml</span>
-                        <span className='font-semibold float-left'>{item.time}</span>
-                        {(el.date === today) ?
-                          <div className='cursor-pointer border border-gray-300 bg-gray-200 hover:bg-gray-300 w-[28px] h-[28px] flex items-center justify-center rounded-full' onClick={() => { deleteData(item.id, item.amount) }}>
-                            <Minus className='text-gray-400 p-[2px]' />
-                          </div> :
-                          <div className='border border-[#5bcefc] w-[28px] h-[28px] flex items-center justify-center rounded-full'>
-                            <Droplet className='p-[2px] text-[#5bcefc]' />
-                          </div>
-                        }
-                      </div>
-                    </div>))}
-                </div>)) :
-              <div>
-                {Array.from({ length: 14 }).map((_, i) => (
-                  <div key={i} className={skeletonStyle}></div>
-                ))}
-              </div>
-            }
-          </div>
-          :
-          <DewyLoading msg={'Updating'} isDay={0} />
-        }
-
+        <div className='w-full sm:w-[30rem] m-auto'>
+          {!updateData ?
+            groupedData?.map((el, i) => (
+              <div key={i}>
+                <div className='text-base/5 px-4 pt-[10px] pb-[8px] rounded-xl mt-7 bg-[#0092bf]'>
+                  <StrokeText isDay={1} text={`${el.total}ml`} strokeDay={'#007295'} strokeNight={''} className='inline' />
+                  <span className='font-bold float-right'>{formattedDate(new Date(el.date))}</span><br />
+                  <StrokeText isDay={1} text={`${Math.round(el.total / el.items[el.items.length - 1].goal * 100)}%`} strokeDay={'#007295'} strokeNight={''} className='inline' />
+                  <span className='text-sm float-right'>{el.items[el.items.length - 1].goal}ml</span>
+                </div>
+                {el.items.map((item, i) => (
+                  <div key={i}>
+                    <div className='w-[5px] h-4 bg-[#0092bf] ml-[30px]'></div>
+                    <div className='h-[52px] grid grid-cols-[24px_1fr_45px_28px] gap-2 items-center text-[#0092bf] bg-white pl-[19px] pr-3 border-[2px] border-[#0291bb] rounded-[40px]'>
+                      <Image className='w-full' alt='cup' width={207} height={399} src={`/cups/${item.cupIndex}.png`} />
+                      <span className='font-bold'>{item.amount}ml</span>
+                      <span className='font-semibold float-left'>{item.time}</span>
+                      {(el.date === today) ?
+                        <div className='cursor-pointer border border-gray-300 bg-gray-200 hover:bg-gray-300 w-[28px] h-[28px] flex items-center justify-center rounded-full' onClick={() => { deleteData(item.id, item.amount) }}>
+                          <Minus className='text-gray-400 p-[2px]' />
+                        </div> :
+                        <div className='border border-[#5bcefc] w-[28px] h-[28px] flex items-center justify-center rounded-full'>
+                          <Droplet className='p-[2px] text-[#5bcefc]' />
+                        </div>
+                      }
+                    </div>
+                  </div>))}
+              </div>)) :
+            <div>
+              {Array.from({ length: 14 }).map((_, i) => (
+                <div key={i} className={skeletonStyle}></div>
+              ))}
+            </div>
+          }
+        </div>
       </div>
+      {loading && <DewyLoading msg={'Saving'} isDay={0} />}
       {error && <Alert />}
     </>
   )

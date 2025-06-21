@@ -78,30 +78,23 @@ export default function Cups({ cups, main }: { cups: CupRow[], main: { cup_index
           </Bubble>
         </div>
 
-        {!loading ?
-          <div>
-            <animated.div {...handlers} className='w-[200vw] grid grid-cols-[repeat(4,50vw)] items-center justify-center' style={slideCup}>
-              <div className={`${cupStyle} bg-[url(/cups/0.png)] ${cupIndex === 0 ? '' : 'grayscale opacity-50'}`}></div>
-              <div className={`${cupStyle} bg-[url(/cups/1.png)] ${cupIndex === 1 ? '' : 'grayscale opacity-50'}`}></div>
-              <div className={`${cupStyle} bg-[url(/cups/2.png)] ${cupIndex === 2 ? '' : 'grayscale opacity-50'}`}></div>
-              <div className={`${cupStyle} bg-[url(/cups/3.png)] ${cupIndex === 3 ? '' : 'grayscale opacity-50'}`}></div>
-            </animated.div>
+        <animated.div {...handlers} className='w-[200vw] grid grid-cols-[repeat(4,50vw)] items-center justify-center' style={slideCup}>
+          <div className={`${cupStyle} bg-[url(/cups/0.png)] ${cupIndex === 0 ? '' : 'grayscale opacity-50'}`}></div>
+          <div className={`${cupStyle} bg-[url(/cups/1.png)] ${cupIndex === 1 ? '' : 'grayscale opacity-50'}`}></div>
+          <div className={`${cupStyle} bg-[url(/cups/2.png)] ${cupIndex === 2 ? '' : 'grayscale opacity-50'}`}></div>
+          <div className={`${cupStyle} bg-[url(/cups/3.png)] ${cupIndex === 3 ? '' : 'grayscale opacity-50'}`}></div>
+        </animated.div>
 
-            <AmountPicker unit='ml' min={0} max={2100} initial={amount} setNumber={setValue} step={10} />
+        <AmountPicker unit='ml' min={0} max={2100} initial={amount} setNumber={setValue} step={10} />
 
-            <div className='flex justify-center mb-6' onClick={save}>
-              <Button disable={value === 0}>
-                <span className=''>SAVE</span>
-              </Button>
-            </div>
-
-
-          </div>
-          :
-          <DewyLoading msg={'Saving'} isDay={0} />}
-
+        <div className='flex justify-center mb-6' onClick={save}>
+          <Button disable={value === 0}>
+            <span className=''>SAVE</span>
+          </Button>
+        </div>
       </div>
 
+      {loading && <DewyLoading msg={'Saving'} isDay={0} />}
       {error && <Alert />}
     </div>
   )

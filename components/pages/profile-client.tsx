@@ -117,7 +117,7 @@ export default function Profile({ data, initial }: { data: ProfileRow, initial: 
                       :
                       <>
                         <span className=' font-bold'>No Location Access</span>
-                        <MapPinOff className='inline my-[5px] mx-auto animate-pulse' />
+                        <MapPinOff className='inline my-[5px] ml-6 animate-pulse ' />
                       </>
                     }
                   </div>

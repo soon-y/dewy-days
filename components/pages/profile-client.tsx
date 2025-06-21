@@ -13,9 +13,11 @@ import { getWeatherData } from '@/app/api/weather/getWeatherData'
 import Modal from '@/components/Modal'
 import useSWR from 'swr'
 import { ProfileRow } from '@/types'
+import DewyLoading from '../dewyLoading'
 
 export default function Profile({ data, initial }: { data: ProfileRow, initial: { goal: number } }) {
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [loaded, setLoaded] = useState<boolean>(false)
   const [weight, setWeight] = useState<number>(data.weight)
@@ -65,6 +67,7 @@ export default function Profile({ data, initial }: { data: ProfileRow, initial: 
   }, [weight, duration, activity, manual, manualGoal, tempMode])
 
   const save = async () => {
+    setLoading(true)
     const res = await fetch('/api/profile/update', {
       method: 'POST',
       headers: {
@@ -75,6 +78,7 @@ export default function Profile({ data, initial }: { data: ProfileRow, initial: 
 
     const result = await res.json()
     if (result.success) {
+      setLoading(false)
       router.push('/')
     } else {
       setAlert(true)
@@ -92,70 +96,74 @@ export default function Profile({ data, initial }: { data: ProfileRow, initial: 
             <X />
           </Bubble>
         </div>
-        <div className='flex flex-col items-center justify-center h-[calc(100vh-100px)] min-h-[500px] font-[family-name:var(--font-nunito)]'>
-          <div className='grid grid-rows-[30px_1fr_60px_60px] h-[430px] items-center justify-center place-items-center mt-2 mb-6'>
-            <div className='w-56 grid grid-cols-[1fr_56px] gap-2 items-center'>
-              <p className=' font-bold'>Set Manually</p>
-              <ToggleSwitch onChange={(event, val) => setManual(val)} checked={manual} svg={manualIcon} />
-            </div>
+        {!loading ?
+          <div className='flex flex-col items-center justify-center h-[calc(100vh-100px)] min-h-[500px] font-[family-name:var(--font-nunito)]'>
+            <div className='grid grid-rows-[30px_1fr_60px_60px] h-[430px] items-center justify-center place-items-center mt-2 mb-6'>
+              <div className='w-56 grid grid-cols-[1fr_56px] gap-2 items-center'>
+                <p className=' font-bold'>Set Manually</p>
+                <ToggleSwitch onChange={(event, val) => setManual(val)} checked={manual} svg={manualIcon} />
+              </div>
 
-            <div className='flex flex-col items-center justify-center'>
-              {manual ?
-                <div className='flex items-center justify-center'>
-                  {loaded ?
-                    <NumInput name='goal' initial={manualGoal} step={10} min={0} unit='ml' setNumber={setManualGoal} disable={false} /> :
-                    <div className={skeletonStyle}></div>}
-                </div>
-                :
-                <>
-                  <div className='w-56 grid grid-cols-[1fr_56px] gap-2 items-center m-4'>
-                    {weatherData?.daily !== null ?
-                      <>
-                        {tempMode ? <span className='font-bold'>Temperature {highestTemp}°C</span> : <span className='font-bold'>Temperature Mode</span>}
-                        <ToggleSwitch onChange={(event, val) => setTempMode(val)} checked={tempMode} svg={weatherIcon} />
-                      </>
-                      :
-                      <>
-                        <span className=' font-bold'>No Location Access</span>
-                        <MapPinOff className='inline my-[5px] ml-6 animate-pulse ' />
-                      </>
+              <div className='flex flex-col items-center justify-center'>
+                {manual ?
+                  <div className='flex items-center justify-center'>
+                    {loaded ?
+                      <NumInput name='goal' initial={manualGoal} step={10} min={0} unit='ml' setNumber={setManualGoal} disable={false} /> :
+                      <div className={skeletonStyle}></div>}
+                  </div>
+                  :
+                  <>
+                    <div className='w-56 grid grid-cols-[1fr_56px] gap-2 items-center m-4'>
+                      {weatherData?.daily !== null ?
+                        <>
+                          {tempMode ? <span className='font-bold'>Temperature {highestTemp}°C</span> : <span className='font-bold'>Temperature Mode</span>}
+                          <ToggleSwitch onChange={(event, val) => setTempMode(val)} checked={tempMode} svg={weatherIcon} />
+                        </>
+                        :
+                        <>
+                          <span className=' font-bold'>No Location Access</span>
+                          <MapPinOff className='inline my-[5px] ml-6 animate-pulse ' />
+                        </>
+                      }
+                    </div>
+
+                    {loaded ?
+                      <NumInput name='weight' initial={weight} step={1} min={30} unit='kg' setNumber={setWeight} disable={false} /> :
+                      <div className={skeletonStyle}></div>
                     }
+
+                    <div className='w-56 grid grid-cols-[1fr_56px] gap-2 items-center mt-4'>
+                      <span className=' font-bold'>Activity Mode</span>
+                      <ToggleSwitch onChange={(event, val) => setActivity(val)} checked={activity} svg={activeIcon} />
+                    </div>
+
+                    {loaded ?
+                      <NumInput name='workout' initial={duration} step={15} min={0} unit='mins' setNumber={setDuration} disable={!activity} /> :
+                      <div className={skeletonStyle}></div>
+                    }
+                  </>}
+              </div>
+
+              <div className='flex justify-center items-center'>
+                <span className='text-xl mr-2'>Today&apos;s goal</span>
+                {goal === 0 ?
+                  <div className='w-28 h-6 bg-[#7fdcfb] inline-block rounded-md animate-pulse'></div> :
+                  <div className='flex justify-center items-center'>
+                    <span className='text-xl font-black'>{goal + "ml"}</span>
+                    <CircleHelp className='m-2 inline-block cursor-pointer' onClick={() => setIsOpen(true)} />
                   </div>
-
-                  {loaded ?
-                    <NumInput name='weight' initial={weight} step={1} min={30} unit='kg' setNumber={setWeight} disable={false} /> :
-                    <div className={skeletonStyle}></div>
-                  }
-
-                  <div className='w-56 grid grid-cols-[1fr_56px] gap-2 items-center mt-4'>
-                    <span className=' font-bold'>Activity Mode</span>
-                    <ToggleSwitch onChange={(event, val) => setActivity(val)} checked={activity} svg={activeIcon} />
-                  </div>
-
-                  {loaded ?
-                    <NumInput name='workout' initial={duration} step={15} min={0} unit='mins' setNumber={setDuration} disable={!activity} /> :
-                    <div className={skeletonStyle}></div>
-                  }
-                </>}
-            </div>
-
-            <div className='flex justify-center items-center'>
-              <span className='text-xl mr-2'>Today&apos;s goal</span>
-              {goal === 0 ?
-                <div className='w-28 h-6 bg-[#7fdcfb] inline-block rounded-md animate-pulse'></div> :
-                <div className='flex justify-center items-center'>
-                  <span className='text-xl font-black'>{goal + "ml"}</span>
-                  <CircleHelp className='m-2 inline-block cursor-pointer' onClick={() => setIsOpen(true)} />
-                </div>
-              }
-            </div>
-            <div className='flex justify-center' onClick={save}>
-              <Button disable={goal === 0}>
-                <p className=''>SAVE</p>
-              </Button>
+                }
+              </div>
+              <div className='flex justify-center' onClick={save}>
+                <Button disable={goal === 0}>
+                  <p className=''>SAVE</p>
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+          :
+          <DewyLoading msg={'Saving'} isDay={0} />
+        }
       </div>
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
@@ -195,6 +203,7 @@ export default function Profile({ data, initial }: { data: ProfileRow, initial: 
           </table>
         </div>
       </Modal>
+
       {alert && <Alert />}
     </div>
   )

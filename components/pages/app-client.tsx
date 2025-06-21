@@ -18,6 +18,7 @@ import WeatherIcon from '@/components/weatherIcon'
 import { getWeatherData } from '@/app/api/weather/getWeatherData'
 import useSWR from 'swr'
 import { MainRow } from "@/types"
+import DewyLoading from '../dewyLoading'
 
 export default function App({ main, cup, reset, waterHeightInit }: { main: MainRow, cup: { amount: number }, reset: boolean, waterHeightInit: number }) {
   const [cupIndex, setCupIndex] = useState<number | null>(main.cup_index)
@@ -51,7 +52,7 @@ export default function App({ main, cup, reset, waterHeightInit }: { main: MainR
 
   useEffect(() => {
     setHasMounted(true)
-    
+
     async function fetchData() {
       const res = await fetch('/api/main/fetch')
       if (!res.ok) {
@@ -191,10 +192,8 @@ export default function App({ main, cup, reset, waterHeightInit }: { main: MainR
             </div>
           </>
         ) :
-          <div className='fixed w-full h-full flex flex-col left-0 top-0 items-center justify-center'>
-            <Image className='w-40' alt='loading' src={'/dewy/dewy_smile.png'} width={671} height={653} priority />
-            <p className={`animate-pulse text-xl mt-4 font-[family-name:var(--font-nunito)] ${isDay === 1 ? 'text-[#05aee6]' : 'text-white'}`}>Loading</p>
-          </div>}
+          <DewyLoading msg={'Saving'} isDay={0} />
+        }
 
         {hasMounted &&
           <div className='fixed bottom-0 left-0 h-[6.4rem] z-100 grid grid-cols-[1fr_10px_50px_50px] gap-2 w-full p-6 pl-7'>

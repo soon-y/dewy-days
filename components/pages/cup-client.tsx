@@ -11,8 +11,10 @@ import Alert from '@/components/alert'
 import { X } from 'lucide-react'
 import { useSwipeable } from 'react-swipeable'
 import { CupRow } from "@/types"
+import DewyLoading from '../dewyLoading'
 
 export default function Cups({ cups, main }: { cups: CupRow[], main: { cup_index: number } }) {
+  const [loading, setLoading] = useState<boolean>(false)
   const router = useRouter()
   const cupArray: CupRow[] = cups
   const [cupIndex, setCupIndex] = useState<number>(main.cup_index)
@@ -46,6 +48,7 @@ export default function Cups({ cups, main }: { cups: CupRow[], main: { cup_index
   })
 
   const save = async () => {
+    setLoading(true)
     const res = await fetch('/api/cup/updateCupSetting', {
       method: 'POST',
       headers: {
@@ -57,6 +60,7 @@ export default function Cups({ cups, main }: { cups: CupRow[], main: { cup_index
     const result = await res.json()
     if (result.success) {
       router.push('/')
+      setLoading(false)
     } else {
       setError(true)
       setTimeout(() => setError(false), 3000)
@@ -74,20 +78,28 @@ export default function Cups({ cups, main }: { cups: CupRow[], main: { cup_index
           </Bubble>
         </div>
 
-        <animated.div {...handlers} className='w-[200vw] grid grid-cols-[repeat(4,50vw)] items-center justify-center' style={slideCup}>
-          <div className={`${cupStyle} bg-[url(/cups/0.png)] ${cupIndex === 0 ? '' : 'grayscale opacity-50'}`}></div>
-          <div className={`${cupStyle} bg-[url(/cups/1.png)] ${cupIndex === 1 ? '' : 'grayscale opacity-50'}`}></div>
-          <div className={`${cupStyle} bg-[url(/cups/2.png)] ${cupIndex === 2 ? '' : 'grayscale opacity-50'}`}></div>
-          <div className={`${cupStyle} bg-[url(/cups/3.png)] ${cupIndex === 3 ? '' : 'grayscale opacity-50'}`}></div>
-        </animated.div>
+        {!loading ?
+          <div>
+            <animated.div {...handlers} className='w-[200vw] grid grid-cols-[repeat(4,50vw)] items-center justify-center' style={slideCup}>
+              <div className={`${cupStyle} bg-[url(/cups/0.png)] ${cupIndex === 0 ? '' : 'grayscale opacity-50'}`}></div>
+              <div className={`${cupStyle} bg-[url(/cups/1.png)] ${cupIndex === 1 ? '' : 'grayscale opacity-50'}`}></div>
+              <div className={`${cupStyle} bg-[url(/cups/2.png)] ${cupIndex === 2 ? '' : 'grayscale opacity-50'}`}></div>
+              <div className={`${cupStyle} bg-[url(/cups/3.png)] ${cupIndex === 3 ? '' : 'grayscale opacity-50'}`}></div>
+            </animated.div>
 
-        <AmountPicker unit='ml' min={0} max={2100} initial={amount} setNumber={setValue} step={10} />
+            <AmountPicker unit='ml' min={0} max={2100} initial={amount} setNumber={setValue} step={10} />
 
-        <div className='flex justify-center mb-6' onClick={save}>
-          <Button disable={value === 0}>
-            <span className=''>SAVE</span>
-          </Button>
-        </div>
+            <div className='flex justify-center mb-6' onClick={save}>
+              <Button disable={value === 0}>
+                <span className=''>SAVE</span>
+              </Button>
+            </div>
+
+
+          </div>
+          :
+          <DewyLoading msg={'Saving'} isDay={0} />}
+
       </div>
 
       {error && <Alert />}

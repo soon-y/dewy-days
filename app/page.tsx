@@ -20,17 +20,23 @@ export default async function Home() {
 
     const cupData = await sql`SELECT amount FROM cup WHERE id = ${rawMainData[0].cup_index + 1}`
     if (!cupData.length) throw new Error("Missing cup data")
+
     const cup = cupData[0] as { amount: number }
     const main = rawMainData[0] as MainRow
     const timeline = timelineData[0] as { date: Date }
     const lastDate = new Date(timeline.date).toLocaleDateString()
     const today = new Date().toLocaleDateString()
     const reset: boolean = today.includes(lastDate) ? false : true
-    const waterHeight = reset? 100 : main.current_amount >= main.goal ? 0 : 100 - (main.current_amount / main.goal * 100)
+    const waterHeight = reset ? 100 : main.current_amount >= main.goal ? 0 : 100 - (main.current_amount / main.goal * 100)
 
-    return <App main={main} cup={cup} reset={reset} waterHeightInit={waterHeight} />
+    if (reset) {
+      const updateAmount = await sql`UPDATE main SET current_amount = 0 WHERE id = 1`
+      if (updateAmount.length) return <App main={main} cup={cup} reset={reset} waterHeightInit={waterHeight} />
+      else throw new Error("Update error")
+    } else return <App main={main} cup={cup} reset={reset} waterHeightInit={waterHeight} />
+  
   } catch (error) {
-    console.error("Error loading data:", error)
+    console.error("Error occured:", error)
     return (
       <div className={`w-full h-full fixed overflow-hidden p-6 bg-[url(/main/bg.jpg)]`}>
         <Alert />

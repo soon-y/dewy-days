@@ -20,13 +20,14 @@ import useSWR from 'swr'
 import { MainRow } from "@/types"
 
 export default function App({ main, cup, reset, waterHeightInit }: { main: MainRow, cup: { amount: number }, reset: boolean, waterHeightInit: number }) {
-  const cupIndex: number = main.cup_index
-  const goal: number = main.goal
-  const volume: number = cup.amount
-  const marks = [{ value: volume, label: volume + 'ml' }]
+  const [cupIndex, setCupIndex] = useState<number | null>(main.cup_index)
+  const [resetCurrentAmount, setReset] = useState<boolean>(reset)
+  const [goal, setGoal] = useState<number>(main.goal)
   const [waterIntake, setWaterIntake] = useState<number>(reset ? 0 : main.current_amount)
   const [waterHeight, setWaterHeight] = useState<number>(waterHeightInit)
+  const [volume, setVolume] = useState<number>(cup.amount)
   const [amount, setAmount] = useState<number>(cup.amount)
+  const marks = [{ value: volume, label: volume + 'ml' }]
   const [alert, setAlert] = useState<boolean>(false)
   const [hasMounted, setHasMounted] = useState<boolean>(false)
   const [hurray, setHurray] = useState<boolean>(false)
@@ -49,8 +50,47 @@ export default function App({ main, cup, reset, waterHeightInit }: { main: MainR
   })
 
   useEffect(() => {
-    setHasMounted(true)
+    async function fetchData() {
+      const res = await fetch('/api/main/fetch')
+      if (!res.ok) {
+        setAlert(true)
+        setTimeout(() => setAlert(false), 3000)
+        return
+      }
+
+      const json = await res.json()
+      if (json === null) {
+        setAlert(true)
+        setTimeout(() => setAlert(false), 3000)
+      } else {
+        setReset(json.reset)
+        setVolume(json.cupAmount)
+        setGoal(json.main[0].goal)
+        setWaterIntake(json.main[0].current_amount)
+        setCupIndex(json.main[0].cup_index)
+        setWaterHeight(100 - (json.main[0].current_amount / json.main[0].goal * 100))
+        setHasMounted(true)
+      }
+    }
+
+    fetchData()
   }, [])
+
+  useEffect(() => {
+    if (resetCurrentAmount) {
+      fetch('/api/updateCurrentAmount', {
+        method: 'POST',
+      })
+        .then(res => {
+          if (res.ok) {
+            setWaterIntake(0)
+          } else {
+            setAlert(true)
+            setTimeout(() => setAlert(false), 3000)
+          }
+        })
+    }
+  }, [resetCurrentAmount])
 
   useEffect(() => {
     if (weatherData && weatherData.current !== null) {
@@ -68,7 +108,6 @@ export default function App({ main, cup, reset, waterHeightInit }: { main: MainR
 
   const addWaterIntake = () => {
     const intake = waterIntake + amount
-    setHurray(true)
     setTimeout(() => {
       setHurray(false)
     }, 500)
@@ -84,6 +123,7 @@ export default function App({ main, cup, reset, waterHeightInit }: { main: MainR
   }
 
   const add = async () => {
+    setHurray(true)
     const today = new Date()
     const currentAmount = waterIntake + amount
 
